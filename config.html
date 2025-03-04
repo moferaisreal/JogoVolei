@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Big+Shoulders:opsz,wght@10..72,100..900&display=swap"
+        rel="stylesheet"
+      />
+      <link rel="stylesheet" href="style.css" />
+      <title>Configurações</title>
+    </head>
+  </head>
+  <body>
+    <a href="./index.html"><img src="./images/homebtn.png" alt="" /></a>
+    <div class="controls">
+      <form action="">
+        <h2>Pontos</h2>
+        <input type="number" min="0" max="25" id="scoreInput" />
+        <img src="./images/savebtn.png" onclick="saveScore()" />
+      </form>
+      <form action="">
+        <h2>Players</h2>
+        <input type="number" id="playersInput" min="2" />
+        <img src="./images/savebtn.png" onclick="savePlayers()" />
+      </form>
+    </div>
+    <div class="participantes">
+      <h2>Participantes</h2>
+      <form>
+        <input
+          type="text"
+          required
+          id="player"
+          placeholder="Adicione o participante"
+          onclick="addPlayer()"
+        />
+        <img src="./images/savebtn.png" />
+      </form>
+      <div class="players"><ul id="players"></ul></div>
+      <div class="controls">
+        <img src="./images/savebtn.png" onclick="saveAll()" />
+        <img src="./images/cancelbtn.png" onclick="cancelLast()" />
+      </div>
+    </div>
+  </body>
+</html>
