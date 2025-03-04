@@ -3,14 +3,74 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders:opsz,wght@10..72,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
     <title>Jogo Vôlei</title>
   </head>
   <body>
     <header><h1>Placar</h1></header>
-    <main></main>
+    <main>
+      <div class="upperControls">
+        <img
+          class="btn"
+          src="./images/refreshbtn.png"
+          id="refreshbtn"
+          onclick="refreshpage()"
+        />
+        <a href="./config.html"
+          ><img
+            class="btn"
+            src="./images/settingsbtn.png"
+            id="settingsbtn"
+            onclick="config.html"
+        /></a>
+      </div>
+      <h1>PLACAR</h1>
+      <div id="scoreboard">
+        <div id="team1">
+          <h2>Time 1</h2>
+          <img src="./images/minusbtn.png" onclick="resetScore(1)" />
+          <div class="score">
+            <span id="score1">0</span>
+            <img
+              class="btn"
+              src="./images/plusbtn.png"
+              onclick="incrementScore(1)"
+              alt=""
+            />
+          </div>
+          <img src="./images/saqueicon.png" id="service" />
+        </div>
+        <div id="team2">
+          <h2>Time 2</h2>
+          <img src="./images/minusbtn.png" onclick="resetScore(2)" />
+
+          <div class="score">
+            <span id="score2">0</span>
+            <img
+              class="btn"
+              src="./images/plusbtn.png"
+              onclick="incrementScore(2)"
+            />
+          </div>
+          <img src="./images/saqueicon.png" id="service" />
+        </div>
+      </div>
+    </main>
+    <script src="script.js"></script>
     <footer>
       <h2>Placar Vôlei - 2025</h2>
-      <p>Desenvolvido por: <strong>Marcelo Rocha</strong></p>
+      <p>
+        Desenvolvido por:
+        <strong
+          ><a href="https://github.com/moferaisreal">Marcelo Rocha</a></strong
+        >
+      </p>
       <p>
         <a href="https://www.freepik.com/author/mehboobmandan449/icons"
           >Icon by Bahu Icons</a
