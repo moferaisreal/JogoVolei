@@ -1,4 +1,4 @@
-#sistema de gerenciamento de jogo de volei
+sistema de gerenciamento de jogo de volei
 # você escolhe os pontos
 # quantos participantes
 # adiciona o nome dos participantes
