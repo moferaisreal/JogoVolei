@@ -13,60 +13,74 @@
     <title>Jogo Vôlei</title>
   </head>
   <body>
-    <header><h1>Vôlei 1.0</h1></header>
+    <header>
+      <h1>PLACAR</h1>
+    </header>
     <main>
       <div class="controls">
         <img
-          class="btn"
+          class="controlBtn"
           src="./images/refreshbtn.png"
           id="refreshbtn"
-          onclick="refreshpage()"
+          alt="Refresh Scoreboard"
         />
-        <a href="./config.html"
-          ><img
-            class="btn"
+        <a href="./config.html">
+          <img
+            class="controlBtn"
             src="./images/settingsbtn.png"
             id="settingsbtn"
-            onclick="config.html"
-        /></a>
+            alt="Open Settings"
+          />
+        </a>
       </div>
-      <h1>PLACAR</h1>
       <div class="scoreboard" id="scoreboard">
         <div id="team1">
           <h2>Time 1</h2>
           <img
-            class="btn"
             src="./images/minusbtn.png"
-            onclick="resetScore(1)"
+            class="btn"
+            id="minusT1"
+            alt="Decrease Team 1 Score"
           />
           <div class="score">
             <span id="score1">0</span>
             <img
-              class="btn"
               src="./images/plusbtn.png"
-              onclick="incrementScore(1)"
-              alt=""
+              class="btn"
+              id="plusT1"
+              alt="Increase Team 1 Score"
             />
           </div>
-          <img src="./images/saqueicon.png" id="service" class="btn" />
+          <img
+            src="./images/saqueicon.png"
+            id="service1"
+            class="btn"
+            alt="Team 1 Service"
+          />
         </div>
         <div id="team2">
           <h2>Time 2</h2>
           <img
             src="./images/minusbtn.png"
-            onclick="resetScore(2)"
             class="btn"
+            id="minusT2"
+            alt="Decrease Team 2 Score"
           />
-
           <div class="score">
             <span id="score2">0</span>
             <img
-              class="btn"
               src="./images/plusbtn.png"
-              onclick="incrementScore(2)"
+              class="btn"
+              id="plusT2"
+              alt="Increase Team 2 Score"
             />
           </div>
-          <img class="btn" src="./images/saqueicon.png" id="service" />
+          <img
+            src="./images/saqueicon.png"
+            id="service2"
+            class="btn"
+            alt="Team 2 Service"
+          />
         </div>
       </div>
     </main>

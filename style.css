@@ -56,7 +56,7 @@ span {
 }
 
 h1 {
-  font: var(--h1);
+  font: var(--big);
   text-align: center;
 }
 
@@ -84,7 +84,7 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  margin: 10rem auto;
+  margin: 10rem auto 0;
 }
 
 footer {
@@ -116,4 +116,10 @@ body {
   display: flex;
   justify-content: space-between;
   flex-direction: column;
+  margin: 0 1rem;
+}
+
+.controlBtn {
+  max-width: clamp(4.2358rem, 4.2358rem + 0vw, 4.2358rem);
+  max-height: clamp(4.2358rem, 4.2358rem + 0vw, 4.2358rem);
 }
