@@ -19,7 +19,7 @@
       <a href="./index.html"
         ><img src="./images/homebtn.png" class="btn homebtn"
       /></a>
-      <div class="controls">
+      <div class="configControls">
         <form action="">
           <h2>Pontos</h2>
           <input type="number" min="11" max="25" id="scoreInput" />
@@ -39,7 +39,7 @@
           />
         </form>
       </div>
-      <div class="participantes">
+      <div class="configControls">
         <h2>Participantes</h2>
         <form>
           <input
@@ -54,7 +54,14 @@
             onclick="addPlayer()"
           />
         </form>
-        <div class="players"><ul id="players"></ul></div>
+        <div class="players">
+          <ul id="players"></ul>
+          <img
+            src="./images/deletebtn.png"
+            class="configbtn"
+            onclick="deletePlayer()"
+          />
+        </div>
         <div class="lowerControls">
           <img class="btn" src="./images/savebtn.png" onclick="saveAll()" />
           <img

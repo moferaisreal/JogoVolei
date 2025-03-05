@@ -111,3 +111,8 @@ body {
   display: flex;
   align-items: center;
 }
+.configControls {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
