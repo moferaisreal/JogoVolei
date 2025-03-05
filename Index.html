@@ -13,7 +13,7 @@
     <title>Jogo Vôlei</title>
   </head>
   <body>
-    <header><h1>Placar</h1></header>
+    <header><h1>Vôlei 1.0</h1></header>
     <main>
       <div class="controls">
         <img
@@ -31,10 +31,14 @@
         /></a>
       </div>
       <h1>PLACAR</h1>
-      <div id="scoreboard">
+      <div class="scoreboard" id="scoreboard">
         <div id="team1">
           <h2>Time 1</h2>
-          <img src="./images/minusbtn.png" onclick="resetScore(1)" />
+          <img
+            class="btn"
+            src="./images/minusbtn.png"
+            onclick="resetScore(1)"
+          />
           <div class="score">
             <span id="score1">0</span>
             <img
@@ -44,11 +48,15 @@
               alt=""
             />
           </div>
-          <img src="./images/saqueicon.png" id="service" />
+          <img src="./images/saqueicon.png" id="service" class="btn" />
         </div>
         <div id="team2">
           <h2>Time 2</h2>
-          <img src="./images/minusbtn.png" onclick="resetScore(2)" />
+          <img
+            src="./images/minusbtn.png"
+            onclick="resetScore(2)"
+            class="btn"
+          />
 
           <div class="score">
             <span id="score2">0</span>
@@ -58,7 +66,7 @@
               onclick="incrementScore(2)"
             />
           </div>
-          <img src="./images/saqueicon.png" id="service" />
+          <img class="btn" src="./images/saqueicon.png" id="service" />
         </div>
       </div>
     </main>

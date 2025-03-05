@@ -10,9 +10,6 @@
   --margin-xxxl: 2.5rem;
 
   /*Colors*/
-  --verde: #4bae4f;
-  --vermelho-: #e63e32;
-  --azul: #208fe8;
   --claro: #f0e3db;
   --escuro20: #283d3b;
   --escuro40: #517b77;
@@ -20,16 +17,11 @@
 
   /*Fonts*/
   --ff: "Big Shoulders", sans-serif;
-  --tiny: clamp(0.5628rem, 0.7208rem + -0.1317vw, 0.6944rem) var(--ff);
-  --small: clamp(0.7502rem, 0.85rem + -0.0831vw, 0.8333rem) var(--ff);
+  --small: clamp(0.618rem, 0.618rem + 0vw, 0.618rem) var(--ff);
   --p: clamp(1rem, 1rem + 0.7705vw, 1rem) var(--ff);
-  --h6: clamp(1.2rem, 1.1734rem + 0.133vw, 1.333rem) var(--ff);
-  --h5: clamp(1.44rem, 1.3726rem + 0.3369vw, 1.7769rem) var(--ff);
-  --h4: clamp(1.728rem, 1.5999rem + 0.6406vw, 2.3686rem) var(--ff);
-  --h3: clamp(2.0736rem, 1.8569rem + 1.0837vw, 3.1573rem) var(--ff);
-  --h2: clamp(2.4883rem, 2.1442rem + 1.7204vw, 4.2087rem) var(--ff);
-  --h1: clamp(2.986rem, 2.4611rem + 2.6242vw, 5.6102rem) var(--ff);
-  --big: clamp(3.5832rem, 2.8041rem + 3.8953vw, 7.4784rem) var(--ff);
+  --h2: clamp(1.618rem, 1.618rem + 0vw, 1.618rem) var(--ff);
+  --h1: clamp(2.6179rem, 2.6179rem + 0vw, 2.6179rem) var(--ff);
+  --big: clamp(6.8535rem, 6.8535rem + 0vw, 6.8535rem) var(--ff);
 }
 
 /*box reset*/
@@ -48,4 +40,74 @@
 /*btns*/
 .btn:hover {
   scale: 1.05;
+}
+
+.btn {
+  max-width: clamp(2.6179rem, 2.6179rem + 0vw, 2.6179rem);
+  max-height: clamp(2.6179rem, 2.6179rem + 0vw, 2.6179rem);
+}
+
+.homebtn {
+  margin: 1rem 1rem;
+}
+
+span {
+  font: var(--big);
+}
+
+h1 {
+  font: var(--h1);
+  text-align: center;
+}
+
+h2 {
+  font: var(--h2);
+}
+
+html {
+  background-color: var(--escuro60);
+}
+
+.controls {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 0 1rem;
+}
+
+.lowerControls {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 1rem 0;
+}
+
+.scoreboard {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+footer {
+  background-color: var(--escuro20);
+  color: var(--claro);
+  font: var(--small);
+  text-align: center;
+  margin-top: auto;
+  padding: 1rem;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.configbtn {
+  max-width: clamp(1.618rem, 1.618rem + 0vw, 1.618rem);
+  max-height: clamp(1.618rem, 1.618rem + 0vw, 1.618rem);
+}
+
+.score {
+  display: flex;
+  align-items: center;
 }

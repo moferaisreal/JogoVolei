@@ -15,36 +15,71 @@
     </head>
   </head>
   <body>
-    <a href="./index.html"><img src="./images/homebtn.png" alt="" /></a>
-    <div class="controls">
-      <form action="">
-        <h2>Pontos</h2>
-        <input type="number" min="0" max="25" id="scoreInput" />
-        <img src="./images/savebtn.png" onclick="saveScore()" />
-      </form>
-      <form action="">
-        <h2>Players</h2>
-        <input type="number" id="playersInput" min="2" />
-        <img src="./images/savebtn.png" onclick="savePlayers()" />
-      </form>
-    </div>
-    <div class="participantes">
-      <h2>Participantes</h2>
-      <form>
-        <input
-          type="text"
-          required
-          id="player"
-          placeholder="Adicione o participante"
-          onclick="addPlayer()"
-        />
-        <img src="./images/savebtn.png" />
-      </form>
-      <div class="players"><ul id="players"></ul></div>
+    <main>
+      <a href="./index.html"
+        ><img src="./images/homebtn.png" class="btn homebtn"
+      /></a>
       <div class="controls">
-        <img src="./images/savebtn.png" onclick="saveAll()" />
-        <img src="./images/cancelbtn.png" onclick="cancelLast()" />
+        <form action="">
+          <h2>Pontos</h2>
+          <input type="number" min="11" max="25" id="scoreInput" />
+          <img
+            class="configbtn"
+            src="./images/savebtn.png"
+            onclick="saveScore()"
+          />
+        </form>
+        <form action="">
+          <h2>Players</h2>
+          <input type="number" id="playersInput" min="2" />
+          <img
+            class="configbtn"
+            src="./images/savebtn.png"
+            onclick="savePlayers()"
+          />
+        </form>
       </div>
-    </div>
+      <div class="participantes">
+        <h2>Participantes</h2>
+        <form>
+          <input
+            type="text"
+            required
+            id="player"
+            placeholder="Adicione o participante"
+          />
+          <img
+            class="configbtn"
+            src="./images/savebtn.png"
+            onclick="addPlayer()"
+          />
+        </form>
+        <div class="players"><ul id="players"></ul></div>
+        <div class="lowerControls">
+          <img class="btn" src="./images/savebtn.png" onclick="saveAll()" />
+          <img
+            class="btn"
+            src="./images/cancelbtn.png"
+            onclick="cancelLast()"
+          />
+        </div>
+      </div>
+    </main>
+    <script src="script.js"></script>
+    <footer>
+      <h2>Placar Vôlei - 2025</h2>
+      <p>
+        Desenvolvido por:
+        <strong
+          ><a href="https://github.com/moferaisreal">Marcelo Rocha</a></strong
+        >
+      </p>
+      <p>
+        <a href="https://www.freepik.com/author/mehboobmandan449/icons"
+          >Icon by Bahu Icons</a
+        >
+      </p>
+      <p>Todos os direitos reservados</p>
+    </footer>
   </body>
 </html>
