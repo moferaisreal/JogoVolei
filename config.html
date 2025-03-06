@@ -15,26 +15,28 @@
     </head>
   </head>
   <body>
-    <main>
+    <header>
       <a href="./index.html"
-        ><img src="./images/homebtn.png" class="controlBtn homebtn"
+        ><img src="./images/homebtn.png" alt="" class="controlBtn homebtn"
       /></a>
+    </header>
+    <main>
       <div class="configControls">
         <form action="">
-          <h2>Pontos</h2>
+          <h2>Pontuação</h2>
           <input type="number" value="11" min="11" max="25" id="scoreInput" />
           <img
-            class="configbtn"
+            class="configBtn"
             id="ptsInput"
             src="./images/savebtn.png"
             onclick="saveScore()"
           />
         </form>
         <form action="">
-          <h2>Players</h2>
+          <h2>Participantes</h2>
           <input type="number" id="playersInput" min="2" />
           <img
-            class="configbtn"
+            class="configBtn"
             src="./images/savebtn.png"
             onclick="savePlayers()"
           />
@@ -50,7 +52,7 @@
             placeholder="Adicione o participante"
           />
           <img
-            class="configbtn"
+            class="configBtn"
             src="./images/savebtn.png"
             onclick="addPlayer()"
           />
@@ -59,7 +61,7 @@
           <ul id="players"></ul>
           <img
             src="./images/deletebtn.png"
-            class="configbtn"
+            class="configBtn"
             onclick="deletePlayer()"
           />
         </div>

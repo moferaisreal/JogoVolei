@@ -3,12 +3,16 @@ let scores = {
   team2: 0,
 };
 
+//fallback for no configurations
 let config = JSON.parse(localStorage.getItem("volleyballConfig")) || {
   targetScore: 25,
   playersPerTeam: 6,
   currentTeams: { team1: [], team2: [] },
   serviceOrder: [],
 };
+function saveConfig() {
+  localStorage.setItem("volleyballConfig", JSON.stringify(config));
+}
 
 const elements = {
   score1: document.getElementById("score1"),
@@ -92,10 +96,6 @@ function shuffleArray(array) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
-}
-
-function saveConfig() {
-  localStorage.setItem("volleyballConfig", JSON.stringify(config));
 }
 
 document.getElementById("plusT1").addEventListener("click", () => {

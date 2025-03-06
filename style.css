@@ -7,13 +7,15 @@
   --margin-l: 1.25rem;
   --margin-xl: 1.5rem;
   --margin-xxl: 1.75rem;
-  --margin-xxxl: 2.5rem;
+  --margin-xxxl: 2rem;
 
   /*Colors*/
   --claro: #f0e3db;
   --escuro20: #283d3b;
   --escuro40: #517b77;
   --escuro60: #84aeaa;
+  --success: #4caf50;
+  --error: #f44336;
 
   /*Fonts*/
   --ff: "Big Shoulders", sans-serif;
@@ -37,19 +39,174 @@
   font-size: 16px;
 }
 
-/*btns*/
-.btn:hover {
-  scale: 1.05;
+html {
+  background-color: var(--escuro60);
+  height: 100%;
 }
 
-.btn {
-  max-width: clamp(2.6179rem, 2.6179rem + 0vw, 2.6179rem);
-  max-height: clamp(2.6179rem, 2.6179rem + 0vw, 2.6179rem);
+body {
+  min-height: 100vh;
+}
+
+/*BTNS*/
+
+.scoreBtn {
+  max-width: clamp(6.8535rem, 5.6074rem + 6.2305vw, 7.2819rem);
+  max-height: clamp(6.8535rem, 5.6074rem + 6.2305vh, 7.2819rem);
   transition: transform 0.2s ease, filter 0.3s ease, opacity 0.3s ease;
+}
+
+.configBtn {
+  max-width: clamp(2.6179rem, 2.1419rem + 2.3799vw, 2.7815rem);
+  max-height: clamp(2.6179rem, 2.1419rem + 2.3799vw, 2.7815rem);
+  cursor: pointer;
+  margin-left: 10px;
+  transition: transform 0.3s;
+}
+.controlBtn {
+  margin: var(--margin-s);
+  max-width: clamp(4.2358rem, 4.2358rem + 0vw, 4.2358rem);
+  max-height: clamp(4.2358rem, 4.2358rem + 0vw, 4.2358rem);
+}
+
+.configbtn:hover {
+  transform: rotate(15deg);
+}
+
+.homebtn {
+  top: 20px;
+  left: 20px;
+  margin: var(--margin-s);
+}
+
+.serviceBtn {
+  max-width: clamp(2.6179rem, 2.6179rem + 2.3799vw, 2.6179rem);
+  max-height: clamp(2.6179rem, 2.6179rem + 2.3799vh, 2.6179rem);
 }
 
 .homebtn {
   margin: 1rem 1rem;
+}
+
+.delete-player {
+  font: var(--small);
+  width: clamp(1.618rem, 1.3238rem + 1.4709vw, 1.7191rem);
+  height: clamp(1.618rem, 1.3238rem + 1.4709vw, 1.7191rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin-left: var(--margin-xs);
+  border: none;
+}
+
+/*CONTAINERS*/
+
+.score {
+  display: flex;
+  align-items: center;
+  margin: var(--margin-l) var(--margin-m);
+}
+.configControls {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  margin: 0 1rem;
+}
+
+footer {
+  background-color: var(--escuro20);
+  color: var(--claro);
+  font: var(--small);
+  text-align: center;
+  margin-top: auto;
+  padding: var(--margin-m);
+  flex-shrink: 0;
+}
+
+.lowerControls {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.lowerControls {
+  display: flex;
+  justify-content: space-evenly;
+  margin: var(--margin-m) 0;
+}
+
+.configControls {
+  padding: var(--margin-m);
+  margin: var(--margin-m);
+  border: 2px solid var(--escuro40);
+  border-radius: var(--margin-s);
+
+  form {
+    display: flex;
+    gap: var(--margin-s);
+    margin-bottom: var(--margin-l);
+  }
+}
+
+.scoreboard {
+  margin: 0 var(--margin-m);
+  min-height: auto;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.upperControls {
+  display: flex;
+  justify-content: space-evenly;
+  margin: var(--margin-l) var(--margin-m);
+}
+
+.players {
+  margin-top: 15px;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 5px;
+}
+
+/*LIST*/
+
+#players {
+  list-style: none;
+  padding: 0;
+  font: var(--h2);
+  li {
+    padding: var(--margin-xs);
+    background: var(--claro);
+    margin-bottom: var(--margin-xxs);
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+/*INPUTS*/
+
+.feedback {
+  position: fixed;
+  bottom: var(--margin-xl);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--margin-s) var(--margin-m);
+  border-radius: var(--margin-xs);
+  font: var(--p);
+
+  &.success {
+    background: var(--success);
+  }
+
+  &.error {
+    background: var(--error);
+  }
 }
 
 span {
@@ -64,65 +221,6 @@ h1 {
 h2 {
   font: var(--h2);
 }
-
-html {
-  background-color: var(--escuro60);
-}
-
-.controls {
-  display: flex;
-  justify-content: space-evenly;
-  margin: 0 1rem;
-}
-
-.lowerControls {
-  display: flex;
-  justify-content: space-evenly;
-  margin: 1rem 0;
-}
-
-.scoreboard {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  margin: 10rem auto 0;
-}
-
-footer {
-  background-color: var(--escuro20);
-  color: var(--claro);
-  font: var(--small);
-  text-align: center;
-  margin-top: auto;
-  padding: 1rem;
-}
-
-body {
-  color: var(--escuro20);
-  line-height: 1.5;
-}
-
-.configbtn {
-  max-width: clamp(1.618rem, 1.618rem + 0vw, 1.618rem);
-  max-height: clamp(1.618rem, 1.618rem + 0vw, 1.618rem);
-}
-
-.score {
-  display: flex;
-  align-items: center;
-}
-.configControls {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  margin: 0 1rem;
-}
-
-.controlBtn {
-  max-width: clamp(4.2358rem, 4.2358rem + 0vw, 4.2358rem);
-  max-height: clamp(4.2358rem, 4.2358rem + 0vw, 4.2358rem);
-}
-
 #service1,
 #service2 {
   opacity: 0.3;
@@ -139,56 +237,6 @@ body {
   margin: 20px;
   border-radius: 10px;
 }
-
-.configbtn {
-  cursor: pointer;
-  margin-left: 10px;
-  transition: transform 0.3s;
-}
-
-.configbtn:hover {
-  transform: rotate(15deg);
-}
-
-.players {
-  margin-top: 15px;
-  padding: 10px;
-  background: #f5f5f5;
-  border-radius: 5px;
-}
-
-#players {
-  list-style: none;
-  padding: 0;
-}
-
-.lowerControls {
-  margin-top: 20px;
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-}
-
-.homebtn {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-}
-
-@media (max-width: 768px) {
-  .scoreboard {
-    margin: 5rem auto 0;
-    flex-direction: column;
-    gap: var(--margin-xxxl);
-  }
-
-  #team1,
-  #team2 {
-    width: 100%;
-    padding: var(--margin-xl);
-  }
-}
-
 input[type="number"],
 input[type="text"] {
   background: var(--claro);
@@ -204,23 +252,6 @@ input[type="text"]:focus {
   outline: none;
   border-color: var(--escuro20);
   box-shadow: 0 0 8px rgba(40, 61, 59, 0.3);
-}
-
-.configControls form {
-  display: flex;
-  align-items: center;
-  gap: var(--margin-s);
-  margin-bottom: var(--margin-l);
-}
-
-#players li {
-  padding: var(--margin-xs);
-  background: var(--claro);
-  margin-bottom: var(--margin-xxs);
-  border-radius: 4px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .modal-vitoria {
