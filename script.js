@@ -45,13 +45,27 @@ function updateUI() {
   updateService();
 }
 
-function updateService() {
-  const totalPoints = scores.team1 + scores.team2;
-  const serviceIndex = totalPoints === 0 ? 0 : totalPoints % 2;
-  const currentService = config.serviceOrder[serviceIndex];
+function initializeService() {
+  if (config.serviceOrder.length === 0) {
+    config.serviceOrder =
+      Math.random() < 0.5 ? ["team1", "team2"] : ["team2", "team1"];
+  }
+}
 
-  elements.service1.classList.toggle("active", currentService === "team1");
-  elements.service2.classList.toggle("active", currentService === "team2");
+function updateService(scoringTeam) {
+  const currentService = config.serviceOrder[0];
+  if (scoringTeam !== currentService) {
+    config.serviceOrder.push(config.serviceOrder.shift());
+  }
+
+  elements.service1.classList.toggle(
+    "active",
+    config.serviceOrder[0] === "team1"
+  );
+  elements.service2.classList.toggle(
+    "active",
+    config.serviceOrder[0] === "team2"
+  );
 }
 
 function checkVictory() {
@@ -71,21 +85,22 @@ function checkVictory() {
 }
 
 function generateNewMatch(loserTeam) {
-  const allPlayers = [
+  const remainingPlayers = [
     ...config.currentTeams.team1,
     ...config.currentTeams.team2,
-    ...loserTeam,
-  ];
-  const uniquePlayers = [...new Set(allPlayers)];
-  shuffleArray(uniquePlayers);
-  const half = Math.ceil(uniquePlayers.length / 2);
+  ].filter((player) => !loserTeam.includes(player));
+
+  const allPlayers = [...remainingPlayers, ...loserTeam];
+
+  shuffleArray(remainingPlayers);
+
   config.currentTeams = {
-    team1: uniquePlayers.slice(0, half),
-    team2: uniquePlayers.slice(half),
+    team1: remainingPlayers.slice(0, config.playersPerTeam),
+    team2: [...remainingPlayers.slice(config.playersPerTeam), ...loserTeam],
   };
+
   config.serviceOrder =
     Math.random() < 0.5 ? ["team1", "team2"] : ["team2", "team1"];
-
   scores = { team1: 0, team2: 0 };
   saveConfig();
   updateUI();
@@ -100,12 +115,14 @@ function shuffleArray(array) {
 
 document.getElementById("plusT1").addEventListener("click", () => {
   scores.team1++;
+  updateService("team1");
   updateUI();
   checkVictory();
 });
 
 document.getElementById("plusT2").addEventListener("click", () => {
   scores.team2++;
+  updateService("team2");
   updateUI();
   checkVictory();
 });
