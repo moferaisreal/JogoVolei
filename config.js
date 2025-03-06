@@ -31,16 +31,18 @@ function saveScore() {
 
 function savePlayers() {
   const selectedValue = parseInt(elements.playersInput.value);
-  if (isNaN(selectedValue)) {
-    showFeedback("Valor inválido!", "error");
+  if (isNaN(selectedValue) || selectedValue < 2 || selectedValue > 6) {
+    showFeedback("Número inválido! Use entre 2-6", "error");
     elements.playersInput.value = config.playersPerTeam;
     return;
   }
 
-  config.playersPerTeam = Math.min(12, Math.max(2, selectedValue));
-  elements.playersInput.value = config.playersPerTeam;
-  saveConfig();
-  showFeedback("Jogadores por time salvos!", "success");
+  config.playersPerTeam = selectedValue;
+  localStorage.setItem("volleyballConfig", JSON.stringify(config));
+  showFeedback(
+    `Configuração salva: ${selectedValue} jogadores/time`,
+    "success"
+  );
 }
 
 function saveConfig() {

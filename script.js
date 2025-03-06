@@ -22,6 +22,7 @@ const elements = {
   service2: document.getElementById("service2"),
   teamPlayers1: document.getElementById("team1-players"),
   teamPlayers2: document.getElementById("team2-players"),
+  riotStarter: document.getElementById("riotStarter"),
 };
 
 function loadConfig() {
@@ -56,6 +57,31 @@ function loadConfig() {
   updateUI();
 }
 
+function startFirstMatch() {
+  const playersNeeded = config.playersPerTeam * 2;
+
+  const firstPlayers = config.participants.slice(0, playersNeeded);
+
+  if (firstPlayers.length < playersNeeded) {
+    alert(`Adicione pelo menos ${playersNeeded} participantes!`);
+    return;
+  }
+
+  const shuffledPlayers = [...firstPlayers];
+  shuffleArray(shuffledPlayers);
+
+  config.currentTeams = {
+    team1: shuffledPlayers.slice(0, config.playersPerTeam),
+    team2: shuffledPlayers.slice(config.playersPerTeam, playersNeeded),
+  };
+
+  config.serviceOrder =
+    Math.random() < 0.5 ? ["team1", "team2"] : ["team2", "team1"];
+  updateUI();
+  saveConfig();
+  console.log("Times formados:", config.currentTeams);
+}
+
 function updateUI() {
   elements.score1.textContent = scores.team1;
   elements.score2.textContent = scores.team2;
@@ -75,6 +101,17 @@ function updateUI() {
   elements.teamPlayers2.innerHTML = team2Players
     .map((player) => `<li>${player}</li>`)
     .join("");
+
+  document
+    .getElementById("team1")
+    .querySelector(
+      "h2"
+    ).textContent = `Time 1 (${config.currentTeams.team1.length} jogadores)`;
+  document
+    .getElementById("team2")
+    .querySelector(
+      "h2"
+    ).textContent = `Time 2 (${config.currentTeams.team2.length} jogadores)`;
 
   updateService();
 }
@@ -187,6 +224,8 @@ document.getElementById("refreshbtn").addEventListener("click", () => {
   scores = { team1: 0, team2: 0 };
   updateUI();
 });
+
+elements.riotStarter.addEventListener("click", startFirstMatch);
 
 loadConfig();
 updateUI();
