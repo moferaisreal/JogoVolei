@@ -25,7 +25,7 @@
         <form>
           <label for="scoreInput">Pontuação</label>
           <select name="score" id="scoreInput">
-            <option value="11">11</option>
+            <option value="11" selected>11</option>
             <option value="12">12</option>
             <option value="13">13</option>
             <option value="14">14</option>
@@ -41,27 +41,18 @@
             <option value="24">24</option>
             <option value="25">25</option>
           </select>
-          <img
-            class="configBtn"
-            id="ptsInput"
-            src="./images/savebtn.png"
-            onclick="saveScore()"
-          />
+          <img class="configBtn" id="ptsInput" src="./images/savebtn.png" />
         </form>
         <form>
           <label for="playersInput">Participantes</label>
           <select name="players" id="playersInput">
-            <option value="2">2</option>
+            <option value="2" selected>2</option>
             <option value="3">3</option>
             <option value="4">4</option>
             <option value="5">5</option>
             <option value="6">6</option>
           </select>
-          <img
-            class="configBtn"
-            src="./images/savebtn.png"
-            onclick="savePlayers()"
-          />
+          <img class="configBtn" src="./images/savebtn.png" id="savePlayers" />
         </form>
       </div>
       <div class="configControls">

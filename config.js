@@ -4,68 +4,77 @@ const elements = {
   playerInput: document.getElementById("player"),
   playersList: document.getElementById("players"),
   ptsInput: document.getElementById("ptsInput"),
+  savePlayersBtn: document.getElementById("savePlayers"),
 };
 
 let config = JSON.parse(localStorage.getItem("volleyballConfig")) || {
-  targetScore: [],
+  targetScore: 11,
+  playersPerTeam: 2,
   participants: [],
   currentTeams: { team1: [], team2: [] },
+  serviceOrder: [],
 };
 
 function saveScore() {
   const newScore = parseInt(elements.scoreInput.value);
-  if (isNaN(newScore) || newScore < 11 || newScore > 25) {
-    showFeedback("Valor inválido! Use entre 11-25", "error");
+  if (isNaN(newScore)) {
+    showFeedback("Valor inválido!", "error");
     elements.scoreInput.value = config.targetScore;
     return;
   }
 
-  config.targetScore = newScore;
-  localStorage.setItem("volleyballConfig", JSON.stringify(config));
+  config.targetScore = Math.min(25, Math.max(11, newScore));
+  elements.scoreInput.value = config.targetScore;
+  saveConfig();
   showFeedback("Pontuação salva!", "success");
 }
 
-function initConfig() {
-  elements.scoreInput.value = config.targetScore;
-  elements.playersInput.value = config.participants.length;
-  updatePlayersList();
+function savePlayers() {
+  const selectedValue = parseInt(elements.playersInput.value);
+  if (isNaN(selectedValue)) {
+    showFeedback("Valor inválido!", "error");
+    elements.playersInput.value = config.playersPerTeam;
+    return;
+  }
+
+  config.playersPerTeam = Math.min(12, Math.max(2, selectedValue));
+  elements.playersInput.value = config.playersPerTeam;
+  saveConfig();
+  showFeedback("Jogadores por time salvos!", "success");
 }
 
-function updatePlayersList() {
-  elements.playersList.innerHTML = config.participants
-    .map(
-      (player, index) => `
-            <li data-index="${index}">
-                ${player}
-                <span class="delete-player">❌</span>
-            </li>
-        `
-    )
-    .join("");
+function saveConfig() {
+  localStorage.setItem("volleyballConfig", JSON.stringify(config));
 }
 
 function addPlayer() {
   const name = elements.playerInput.value.trim();
-  if (name && !config.participants.includes(name)) {
+  if (!name) return;
+
+  if (!config.participants.includes(name)) {
     config.participants.push(name);
     elements.playerInput.value = "";
     updatePlayersList();
     saveConfig();
+    showFeedback("Jogador adicionado!", "success");
   }
 }
 
-function deletePlayer() {
-  if (config.participants.length > 0) {
-    config.participants.pop();
-    updatePlayersList();
-    saveConfig();
-  }
-}
+function updatePlayersList() {
+  const participants = Array.isArray(config.participants)
+    ? config.participants
+    : [];
 
-function saveAll() {
-  localStorage.setItem("volleyballConfig", JSON.stringify(config));
-  showFeedback("Todas configurações salvas!", "success");
-  window.location.href = "index.html";
+  elements.playersList.innerHTML = participants
+    .map(
+      (player, index) => `
+      <li data-index="${index}">
+        ${player}
+        <span class="delete-player">❌</span>
+      </li>
+    `
+    )
+    .join("");
 }
 
 function showFeedback(message, type = "info") {
@@ -77,27 +86,50 @@ function showFeedback(message, type = "info") {
   setTimeout(() => feedback.remove(), 2000);
 }
 
-document.getElementById("player").addEventListener("keypress", (e) => {
-  if (e.key === "Enter") addPlayer();
-});
-
-elements.playersList.addEventListener("click", (e) => {
-  if (e.target.classList.contains("delete-player")) {
-    const index = e.target.closest("li").dataset.index;
-    config.participants.splice(index, 1);
+function deletePlayer() {
+  if (config.participants.length > 0) {
+    config.participants.pop();
     updatePlayersList();
     saveConfig();
+    showFeedback("Último jogador removido!", "info");
   }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  elements.scoreInput.value = config.targetScore;
+  elements.playersInput.value = config.playersPerTeam;
+  updatePlayersList();
+
+  elements.ptsInput.addEventListener("click", saveScore);
+  elements.scoreInput.addEventListener("change", saveScore);
+
+  elements.savePlayersBtn.addEventListener("click", savePlayers);
+  elements.playersInput.addEventListener("change", savePlayers);
+
+  document.getElementById("player").addEventListener("keypress", (e) => {
+    if (e.key === "Enter") addPlayer();
+  });
+  elements.playersList.addEventListener("click", (e) => {
+    if (e.target.classList.contains("delete-player")) {
+      const index = e.target.closest("li").dataset.index;
+      config.participants.splice(index, 1);
+      updatePlayersList();
+      saveConfig();
+    }
+  });
+  document
+    .querySelector('[onclick="addPlayer()"]')
+    .addEventListener("click", addPlayer);
+
+  document
+    .querySelector('[onclick="deletePlayer()"]')
+    .addEventListener("click", deletePlayer);
+
+  document
+    .querySelector('[onclick="saveAll()"]')
+    .addEventListener("click", () => {
+      saveConfig();
+      showFeedback("Todas configurações salvas!", "success");
+      window.location.href = "index.html";
+    });
 });
-
-document
-  .querySelector('[onclick="addPlayer()"]')
-  .addEventListener("click", addPlayer);
-document
-  .querySelector('[onclick="deletePlayer()"]')
-  .addEventListener("click", deletePlayer);
-document
-  .querySelector('[onclick="saveAll()"]')
-  .addEventListener("click", saveAll);
-
-document.addEventListener("DOMContentLoaded", initConfig);

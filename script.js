@@ -7,6 +7,7 @@ let scores = {
 let config = JSON.parse(localStorage.getItem("volleyballConfig")) || {
   targetScore: 25,
   playersPerTeam: 6,
+  participants: [],
   currentTeams: { team1: [], team2: [] },
   serviceOrder: [],
 };
@@ -25,23 +26,56 @@ const elements = {
 
 function loadConfig() {
   const savedConfig = localStorage.getItem("volleyballConfig");
-  if (savedConfig) {
-    config = JSON.parse(savedConfig);
-    updateUI();
+  if (!savedConfig) {
+    config = {
+      targetScore: 25,
+      playersPerTeam: 6,
+      participants: [],
+      currentTeams: { team1: [], team2: [] },
+      serviceOrder: [],
+    };
+    return;
   }
+
+  try {
+    config = JSON.parse(savedConfig);
+    // Garantir estrutura mínima
+    config.currentTeams = config.currentTeams || { team1: [], team2: [] };
+    config.participants = config.participants || [];
+  } catch (error) {
+    console.error("Erro ao carregar configurações:", error);
+    config = {
+      // Fallback completo
+      targetScore: 25,
+      playersPerTeam: 6,
+      participants: [],
+      currentTeams: { team1: [], team2: [] },
+      serviceOrder: [],
+    };
+  }
+  updateUI();
 }
 
 function updateUI() {
   elements.score1.textContent = scores.team1;
   elements.score2.textContent = scores.team2;
 
-  elements.teamPlayers1.innerHTML = config.currentTeams.team1
+  const team1Players = Array.isArray(config.currentTeams.team1)
+    ? config.currentTeams.team1
+    : [];
+
+  const team2Players = Array.isArray(config.currentTeams.team2)
+    ? config.currentTeams.team2
+    : [];
+
+  elements.teamPlayers1.innerHTML = team1Players
     .map((player) => `<li>${player}</li>`)
     .join("");
 
-  elements.teamPlayers2.innerHTML = config.currentTeams.team2
+  elements.teamPlayers2.innerHTML = team2Players
     .map((player) => `<li>${player}</li>`)
     .join("");
+
   updateService();
 }
 
@@ -85,22 +119,34 @@ function checkVictory() {
 }
 
 function generateNewMatch(loserTeam) {
+  loserTeam = Array.isArray(loserTeam) ? loserTeam : [];
+
   const remainingPlayers = [
     ...config.currentTeams.team1,
     ...config.currentTeams.team2,
   ].filter((player) => !loserTeam.includes(player));
 
-  const allPlayers = [...remainingPlayers, ...loserTeam];
-
-  shuffleArray(remainingPlayers);
+  const orderedPlayers = [...remainingPlayers, ...loserTeam];
 
   config.currentTeams = {
-    team1: remainingPlayers.slice(0, config.playersPerTeam),
-    team2: [...remainingPlayers.slice(config.playersPerTeam), ...loserTeam],
+    team1: orderedPlayers.slice(0, config.playersPerTeam),
+    team2: orderedPlayers.slice(
+      config.playersPerTeam,
+      config.playersPerTeam * 2
+    ),
   };
+
+  const fillWithLosers = (team) => {
+    const needed = config.playersPerTeam - team.length;
+    return needed > 0 ? [...team, ...loserTeam.slice(-needed)] : team;
+  };
+
+  config.currentTeams.team1 = fillWithLosers(config.currentTeams.team1);
+  config.currentTeams.team2 = fillWithLosers(config.currentTeams.team2);
 
   config.serviceOrder =
     Math.random() < 0.5 ? ["team1", "team2"] : ["team2", "team1"];
+
   scores = { team1: 0, team2: 0 };
   saveConfig();
   updateUI();
