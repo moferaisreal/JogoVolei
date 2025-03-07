@@ -148,7 +148,7 @@ function generateNewMatch() {
   remainingPlayers = remainingPlayers.slice(newPlayers.length);
 
   let allGamePlayers = [...winnerPlayers, ...newPlayers];
-
+  shuffleArray(allGamePlayers);
   config.currentTeams = {
     team1: allGamePlayers.slice(0, config.playersPerTeam),
     team2: allGamePlayers.slice(
