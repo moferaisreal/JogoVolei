@@ -3,7 +3,7 @@ let scores = {
   team2: 0,
 };
 
-//fallback for no configurations
+// Fallback para configuração padrão
 let config = JSON.parse(localStorage.getItem("volleyballConfig")) || {
   targetScore: 25,
   playersPerTeam: 6,
@@ -11,6 +11,7 @@ let config = JSON.parse(localStorage.getItem("volleyballConfig")) || {
   currentTeams: { team1: [], team2: [] },
   serviceOrder: [],
 };
+
 function saveConfig() {
   localStorage.setItem("volleyballConfig", JSON.stringify(config));
 }
@@ -26,27 +27,16 @@ const elements = {
 };
 
 function loadConfig() {
-  const savedConfig = localStorage.getItem("volleyballConfig");
-  if (!savedConfig) {
-    config = {
-      targetScore: 25,
-      playersPerTeam: 6,
-      participants: [],
-      currentTeams: { team1: [], team2: [] },
-      serviceOrder: [],
-    };
-    return;
-  }
-
   try {
+    const savedConfig = localStorage.getItem("volleyballConfig");
+    if (!savedConfig) throw new Error("Nenhuma configuração salva");
+
     config = JSON.parse(savedConfig);
-    // Garantir estrutura mínima
     config.currentTeams = config.currentTeams || { team1: [], team2: [] };
     config.participants = config.participants || [];
   } catch (error) {
     console.error("Erro ao carregar configurações:", error);
     config = {
-      // Fallback completo
       targetScore: 25,
       playersPerTeam: 6,
       participants: [],
@@ -60,45 +50,34 @@ function loadConfig() {
 function startFirstMatch() {
   const playersNeeded = config.playersPerTeam * 2;
 
-  const firstPlayers = config.participants.slice(0, playersNeeded);
-
-  if (firstPlayers.length < playersNeeded) {
+  if (config.participants.length < playersNeeded) {
     alert(`Adicione pelo menos ${playersNeeded} participantes!`);
     return;
   }
 
-  const shuffledPlayers = [...firstPlayers];
-  shuffleArray(shuffledPlayers);
+  const firstPlayers = config.participants.slice(0, playersNeeded);
+  shuffleArray(firstPlayers);
 
   config.currentTeams = {
-    team1: shuffledPlayers.slice(0, config.playersPerTeam),
-    team2: shuffledPlayers.slice(config.playersPerTeam, playersNeeded),
+    team1: firstPlayers.slice(0, config.playersPerTeam),
+    team2: firstPlayers.slice(config.playersPerTeam, playersNeeded),
   };
 
   config.serviceOrder =
     Math.random() < 0.5 ? ["team1", "team2"] : ["team2", "team1"];
-  updateUI();
+
   saveConfig();
-  console.log("Times formados:", config.currentTeams);
+  updateUI();
 }
 
 function updateUI() {
   elements.score1.textContent = scores.team1;
   elements.score2.textContent = scores.team2;
 
-  const team1Players = Array.isArray(config.currentTeams.team1)
-    ? config.currentTeams.team1
-    : [];
-
-  const team2Players = Array.isArray(config.currentTeams.team2)
-    ? config.currentTeams.team2
-    : [];
-
-  elements.teamPlayers1.innerHTML = team1Players
+  elements.teamPlayers1.innerHTML = config.currentTeams.team1
     .map((player) => `<li>${player}</li>`)
     .join("");
-
-  elements.teamPlayers2.innerHTML = team2Players
+  elements.teamPlayers2.innerHTML = config.currentTeams.team2
     .map((player) => `<li>${player}</li>`)
     .join("");
 
@@ -116,16 +95,8 @@ function updateUI() {
   updateService();
 }
 
-function initializeService() {
-  if (config.serviceOrder.length === 0) {
-    config.serviceOrder =
-      Math.random() < 0.5 ? ["team1", "team2"] : ["team2", "team1"];
-  }
-}
-
 function updateService(scoringTeam) {
-  const currentService = config.serviceOrder[0];
-  if (scoringTeam !== currentService) {
+  if (scoringTeam && scoringTeam !== config.serviceOrder[0]) {
     config.serviceOrder.push(config.serviceOrder.shift());
   }
 
@@ -145,41 +116,48 @@ function checkVictory() {
 
   if (maxScore >= config.targetScore && diff >= 2) {
     const winner = scores.team1 > scores.team2 ? "team1" : "team2";
-    const loserTeam =
-      config.currentTeams[winner === "team1" ? "team2" : "team1"];
-
     setTimeout(() => {
       alert(`${config.currentTeams[winner].join(", ")} venceram!`);
-      generateNewMatch(loserTeam);
+      generateNewMatch();
     }, 100);
   }
 }
 
-function generateNewMatch(loserTeam) {
-  loserTeam = Array.isArray(loserTeam) ? loserTeam : [];
+function generateNewMatch() {
+  const winnerTeam = scores.team1 > scores.team2 ? "team1" : "team2";
+  const loserTeam = winnerTeam === "team1" ? "team2" : "team1";
 
-  const remainingPlayers = [
-    ...config.currentTeams.team1,
-    ...config.currentTeams.team2,
-  ].filter((player) => !loserTeam.includes(player));
+  let winnerPlayers = [...config.currentTeams[winnerTeam]];
+  let loserPlayers = [...config.currentTeams[loserTeam]];
 
-  const orderedPlayers = [...remainingPlayers, ...loserTeam];
+  // Remove vencedores e perdedores da lista de participantes
+  let remainingPlayers = config.participants.filter(
+    (p) => !winnerPlayers.includes(p) && !loserPlayers.includes(p)
+  );
+
+  // Perdedor vai para o final da fila
+  remainingPlayers.push(...loserPlayers);
+
+  // Seleciona novos jogadores para preencher a partida
+  let newPlayers = remainingPlayers.slice(
+    0,
+    config.playersPerTeam * 2 - winnerPlayers.length
+  );
+
+  // Remove os novos jogadores da fila principal
+  remainingPlayers = remainingPlayers.slice(newPlayers.length);
+
+  let allGamePlayers = [...winnerPlayers, ...newPlayers];
 
   config.currentTeams = {
-    team1: orderedPlayers.slice(0, config.playersPerTeam),
-    team2: orderedPlayers.slice(
+    team1: allGamePlayers.slice(0, config.playersPerTeam),
+    team2: allGamePlayers.slice(
       config.playersPerTeam,
       config.playersPerTeam * 2
     ),
   };
 
-  const fillWithLosers = (team) => {
-    const needed = config.playersPerTeam - team.length;
-    return needed > 0 ? [...team, ...loserTeam.slice(-needed)] : team;
-  };
-
-  config.currentTeams.team1 = fillWithLosers(config.currentTeams.team1);
-  config.currentTeams.team2 = fillWithLosers(config.currentTeams.team2);
+  config.participants = [...remainingPlayers];
 
   config.serviceOrder =
     Math.random() < 0.5 ? ["team1", "team2"] : ["team2", "team1"];
@@ -226,6 +204,13 @@ document.getElementById("refreshbtn").addEventListener("click", () => {
 });
 
 elements.riotStarter.addEventListener("click", startFirstMatch);
+
+window.addEventListener("storage", (event) => {
+  if (event.key === "volleyballConfig") {
+    loadConfig();
+    updateUI();
+  }
+});
 
 loadConfig();
 updateUI();

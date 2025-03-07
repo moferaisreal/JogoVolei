@@ -60,6 +60,7 @@ function addPlayer() {
     saveConfig();
     showFeedback("Jogador adicionado!", "success");
   }
+  updateUI();
 }
 
 function updatePlayersList() {
@@ -95,6 +96,7 @@ function deletePlayer() {
     saveConfig();
     showFeedback("Último jogador removido!", "info");
   }
+  updateUI();
 }
 
 document.addEventListener("DOMContentLoaded", () => {

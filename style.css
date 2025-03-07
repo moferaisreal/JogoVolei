@@ -224,13 +224,13 @@ h2 {
 }
 #service1,
 #service2 {
-  opacity: 1;
+  opacity: 0;
   transition: opacity 0.3s;
 }
 
 #service1.active,
 #service2.active {
-  opacity: 0;
+  opacity: 1;
 }
 .configControls {
   padding: 20px;
