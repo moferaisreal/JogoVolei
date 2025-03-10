@@ -130,21 +130,17 @@ function generateNewMatch() {
   let winnerPlayers = [...config.currentTeams[winnerTeam]];
   let loserPlayers = [...config.currentTeams[loserTeam]];
 
-  // Remove vencedores e perdedores da lista de participantes
   let remainingPlayers = config.participants.filter(
     (p) => !winnerPlayers.includes(p) && !loserPlayers.includes(p)
   );
 
-  // Perdedor vai para o final da fila
   remainingPlayers.push(...loserPlayers);
 
-  // Seleciona novos jogadores para preencher a partida
   let newPlayers = remainingPlayers.slice(
     0,
     config.playersPerTeam * 2 - winnerPlayers.length
   );
 
-  // Remove os novos jogadores da fila principal
   remainingPlayers = remainingPlayers.slice(newPlayers.length);
 
   let allGamePlayers = [...winnerPlayers, ...newPlayers];
