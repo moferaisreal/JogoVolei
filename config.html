@@ -6,19 +6,27 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
       <link
         href="https://fonts.googleapis.com/css2?family=Big+Shoulders:opsz,wght@10..72,100..900&display=swap"
         rel="stylesheet"
       />
       <link rel="stylesheet" href="style.css" />
+      <script
+        src="https://kit.fontawesome.com/5c055b35a0.js"
+        crossorigin="anonymous"
+      ></script>
       <title>Configurações</title>
     </head>
   </head>
   <body>
     <header>
       <a href="./index.html"
-        ><img src="./images/homebtn.png" alt="" class="controlBtn homebtn"
-      /></a>
+        ><i
+          class="fa-solid fa-house fa-2xl controlBtn homebtn"
+          style="color: #84aeaa; margin-top: 1em"
+        ></i
+      ></a>
     </header>
     <main>
       <div class="configControls">
@@ -39,9 +47,12 @@
             <option value="22">22</option>
             <option value="23">23</option>
             <option value="24">24</option>
-            <option value="25">25</option>
-          </select>
-          <img class="configBtn" id="ptsInput" src="./images/savebtn.png" />
+            <option value="25">25</option></select
+          ><i
+            class="fa-solid fa-volleyball fa-2xl configBtn"
+            style="color: #f0e3db"
+            id="ptsInput"
+          ></i>
         </form>
         <form>
           <label for="playersInput">Participantes</label>
@@ -52,7 +63,11 @@
             <option value="5">5</option>
             <option value="6">6</option>
           </select>
-          <img class="configBtn" src="./images/savebtn.png" id="savePlayers" />
+          <i
+            class="fa-solid fa-users fa-2xl configBtn"
+            style="color: #f0e3db"
+            id="savePlayers"
+          ></i>
         </form>
       </div>
       <div class="configControls">
@@ -64,34 +79,35 @@
             id="player"
             placeholder="Adicione o participante"
           />
-          <img
-            class="configBtn"
-            src="./images/savebtn.png"
+          <i
+            class="fa-solid fa-user-plus fa-2xl configBtn"
+            style="color: #4caf50"
             onclick="addPlayer()"
-          />
+          ></i>
         </form>
         <div class="players">
           <ul id="players"></ul>
-          <img
-            src="./images/deletebtn.png"
-            class="configBtn"
-            onclick="deletePlayer()"
-          />
+          <i
+            class="fa-solid fa-user-minus fa-2xl configBtn"
+            style="color: #f44336"
+            id="deletePlayerBtn"
+          ></i>
         </div>
         <div class="lowerControls">
-          <img
-            class="controlBtn"
-            src="./images/savebtn.png"
+          <i
+            class="fa-solid fa-floppy-disk fa-2xl controlBtn"
+            style="color: #4caf50"
             onclick="saveAll()"
-          />
-          <img
-            class="controlBtn"
-            src="./images/cancelbtn.png"
+          ></i>
+          <i
+            class="fa-solid fa-ban fa-2xl controlBtn"
+            style="color: #f44336"
             onclick="cancelLast()"
-          />
+          ></i>
         </div>
       </div>
     </main>
+
     <script src="config.js"></script>
     <footer>
       <h2>Placar Vôlei - 2025</h2>

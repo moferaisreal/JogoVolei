@@ -60,7 +60,6 @@ function addPlayer() {
     saveConfig();
     showFeedback("Jogador adicionado!", "success");
   }
-  updateUI();
 }
 
 function updatePlayersList() {
@@ -92,11 +91,10 @@ function showFeedback(message, type = "info") {
 function deletePlayer() {
   if (config.participants.length > 0) {
     config.participants.pop();
-    updatePlayersList();
     saveConfig();
-    showFeedback("Último jogador removido!", "info");
+    showFeedback("Último jogador removido!", "success");
+    updatePlayersList();
   }
-  updateUI();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -126,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("click", addPlayer);
 
   document
-    .querySelector('[onclick="deletePlayer()"]')
+    .getElementById("deletePlayerBtn")
     .addEventListener("click", deletePlayer);
 
   document

@@ -10,6 +10,10 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+    <script
+      src="https://kit.fontawesome.com/5c055b35a0.js"
+      crossorigin="anonymous"
+    ></script>
     <title>Jogo Vôlei</title>
   </head>
   <body>
@@ -18,70 +22,71 @@
     </header>
     <main>
       <div class="upperControls">
-        <img class="controlBtn" src="./images/playbtn.png" id="riotStarter" />
-        <img class="controlBtn" src="./images/refreshbtn.png" id="refreshbtn" />
+        <i
+          class="fa-solid fa-circle-play fa-2xl controlBtn"
+          style="color: #4caf50"
+          id="riotStarter"
+        ></i>
+        <i
+          class="fa-solid fa-retweet fa-2xl controlBtn"
+          style="color: #4caf50"
+          id="refreshbtn"
+        ></i>
         <a href="./config.html">
-          <img
-            class="controlBtn"
-            src="./images/settingsbtn.png"
+          <i
+            class="fa-solid fa-gears fa-2xl controlBtn"
+            style="color: #4caf50"
             id="settingsbtn"
-            alt="Open Settings"
-          />
+          ></i>
         </a>
       </div>
       <div class="scoreboard" id="scoreboard">
         <div id="team1">
           <h2 id="teamOne">Time 1</h2>
           <ul class="team-players" id="team1-players"></ul>
-          <img
-            src="./images/minusbtn.png"
-            class="controlBtn"
+          <i
+            class="fa-solid fa-circle-minus fa-2xl controlBtn"
             id="minusT1"
-            alt="Decrease Team 1 Score"
-          />
-          <div class="score">
+            style="color: #f44336; margin-top: 1em"
+          ></i>
+          <div class="score" id="plusT1">
             <span id="score1">0</span>
-            <img
-              src="./images/plusbtn.png"
-              class="scoreBtn"
-              id="plusT1"
-              alt="Increase Team 1 Score"
-            />
+            <i
+              class="fa-solid fa-circle-plus fa-2xl scoreBtn"
+              style="color: #4caf50"
+            ></i>
           </div>
-          <img
-            src="./images/saqueicon.png"
+          <i
+            class="fa-solid fa-star fa-beat fa-2x serviceBtnl"
             id="service1"
-            class="serviceBtn"
-            alt="Team 1 Service"
-          />
+            style="color: #4caf50"
+          ></i>
         </div>
         <div id="team2">
           <h2 id="teamTwo">Time 2</h2>
           <ul class="team-players" id="team2-players"></ul>
-          <img
-            src="./images/minusbtn.png"
-            class="controlBtn"
+          <i
+            class="fa-solid fa-circle-minus fa-2xl controlBtn"
             id="minusT2"
-            alt="Decrease Team 2 Score"
-          />
-          <div class="score">
-            <span id="score2">0</span>
-            <img
-              src="./images/plusbtn.png"
-              class="scoreBtn"
-              id="plusT2"
-              alt="Increase Team 2 Score"
-            />
+            style="color: #f44336; margin-top: 1em"
+          ></i>
+
+          <div class="score" id="plusT2">
+            <span id="score2">0</span
+            ><i
+              class="fa-solid fa-circle-plus fa-2xl scoreBtn"
+              style="color: #4caf50"
+            ></i>
           </div>
-          <img
-            src="./images/saqueicon.png"
+          <i
+            class="fa-solid fa-star fa-beat fa-2x serviceBtnl"
             id="service2"
-            class="serviceBtn"
-            alt="Team 2 Service"
-          />
+            style="color: #4caf50"
+          ></i>
         </div>
       </div>
     </main>
+
     <script src="script.js"></script>
   </body>
 </html>

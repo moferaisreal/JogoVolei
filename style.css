@@ -40,7 +40,7 @@
 }
 
 html {
-  background-color: var(--escuro60);
+  background-color: var(--escuro40);
   height: 100%;
 }
 
@@ -145,6 +145,7 @@ footer {
   border-radius: var(--margin-s);
 
   form {
+    align-items: center;
     display: flex;
     gap: var(--margin-s);
     margin-bottom: var(--margin-l);
@@ -181,7 +182,7 @@ footer {
   li {
     padding: var(--margin-xs);
     background: var(--claro);
-    margin-bottom: var(--margin-xxs);
+    margin-bottom: var(--margin-s);
     border-radius: 4px;
     display: flex;
     justify-content: space-between;
@@ -204,7 +205,7 @@ footer {
     background: var(--success);
   }
 
-  &.error {
+  & .error {
     background: var(--error);
   }
 }
