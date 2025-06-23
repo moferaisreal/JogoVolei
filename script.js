@@ -24,18 +24,25 @@ const elements = {
   teamPlayers1: document.getElementById("team1-players"),
   teamPlayers2: document.getElementById("team2-players"),
   riotStarter: document.getElementById("riotStarter"),
+  victoryModal: document.getElementById("victoryModal"),
+  victoryOverlay: document.getElementById("victoryOverlay"),
+  winnerMessage: document.getElementById("winner-message"),
+  newMatchBtn: document.getElementById("newMatchBtn"),
 };
 
 function loadConfig() {
   try {
     const savedConfig = localStorage.getItem("volleyballConfig");
-    if (!savedConfig) throw new Error("Nenhuma configuração salva");
-
-    config = JSON.parse(savedConfig);
+    if (savedConfig) {
+      config = JSON.parse(savedConfig);
+    }
+    // Ensure nested objects exist
     config.currentTeams = config.currentTeams || { team1: [], team2: [] };
     config.participants = config.participants || [];
+    config.serviceOrder = config.serviceOrder || [];
   } catch (error) {
     console.error("Erro ao carregar configurações:", error);
+    // Reset to a safe default
     config = {
       targetScore: 25,
       playersPerTeam: 6,
@@ -51,7 +58,9 @@ function startFirstMatch() {
   const playersNeeded = config.playersPerTeam * 2;
 
   if (config.participants.length < playersNeeded) {
-    alert(`Adicione pelo menos ${playersNeeded} participantes!`);
+    alert(
+      `Adicione pelo menos ${playersNeeded} participantes na página de configuração!`
+    );
     return;
   }
 
@@ -66,6 +75,7 @@ function startFirstMatch() {
   config.serviceOrder =
     Math.random() < 0.5 ? ["team1", "team2"] : ["team2", "team1"];
 
+  scores = { team1: 0, team2: 0 };
   saveConfig();
   updateUI();
 }
@@ -96,18 +106,42 @@ function updateUI() {
 }
 
 function updateService(scoringTeam) {
-  if (scoringTeam && scoringTeam !== config.serviceOrder[0]) {
+  // If there's a scoring team and they don't have the serve, switch the serve.
+  if (
+    scoringTeam &&
+    config.serviceOrder.length > 0 &&
+    scoringTeam !== config.serviceOrder[0]
+  ) {
+    // This rotates the service order array. e.g., [team1, team2] becomes [team2, team1]
     config.serviceOrder.push(config.serviceOrder.shift());
   }
 
-  elements.service1.classList.toggle(
-    "active",
-    config.serviceOrder[0] === "team1"
-  );
-  elements.service2.classList.toggle(
-    "active",
-    config.serviceOrder[0] === "team2"
-  );
+  if (config.serviceOrder.length > 0) {
+    elements.service1.classList.toggle(
+      "active",
+      config.serviceOrder[0] === "team1"
+    );
+    elements.service2.classList.toggle(
+      "active",
+      config.serviceOrder[0] === "team2"
+    );
+  } else {
+    elements.service1.classList.remove("active");
+    elements.service2.classList.remove("active");
+  }
+}
+
+function showVictoryModal(winner) {
+  elements.winnerMessage.textContent = `${config.currentTeams[winner].join(
+    ", "
+  )} venceram!`;
+  elements.victoryOverlay.classList.add("visible");
+  elements.victoryModal.classList.add("visible");
+}
+
+function hideVictoryModal() {
+  elements.victoryOverlay.classList.remove("visible");
+  elements.victoryModal.classList.remove("visible");
 }
 
 function checkVictory() {
@@ -116,35 +150,34 @@ function checkVictory() {
 
   if (maxScore >= config.targetScore && diff >= 2) {
     const winner = scores.team1 > scores.team2 ? "team1" : "team2";
-    setTimeout(() => {
-      alert(`${config.currentTeams[winner].join(", ")} venceram!`);
-      generateNewMatch();
-    }, 100);
+    setTimeout(() => showVictoryModal(winner), 300); // Delay to allow score animation
   }
 }
 
 function generateNewMatch() {
+  hideVictoryModal();
+
   const winnerTeam = scores.team1 > scores.team2 ? "team1" : "team2";
   const loserTeam = winnerTeam === "team1" ? "team2" : "team1";
 
   let winnerPlayers = [...config.currentTeams[winnerTeam]];
   let loserPlayers = [...config.currentTeams[loserTeam]];
 
-  let remainingPlayers = config.participants.filter(
+  // Players not in the current match
+  let waitingPlayers = config.participants.filter(
     (p) => !winnerPlayers.includes(p) && !loserPlayers.includes(p)
   );
 
-  remainingPlayers.push(...loserPlayers);
+  // The players who lost go to the end of the line
+  config.participants = [...waitingPlayers, ...loserPlayers];
 
-  let newPlayers = remainingPlayers.slice(
-    0,
-    config.playersPerTeam * 2 - winnerPlayers.length
-  );
+  // The winners stay, and we take new players from the start of the line
+  const challengersNeeded = config.playersPerTeam * 2 - winnerPlayers.length;
+  let newChallengers = config.participants.splice(0, challengersNeeded);
 
-  remainingPlayers = remainingPlayers.slice(newPlayers.length);
-
-  let allGamePlayers = [...winnerPlayers, ...newPlayers];
+  let allGamePlayers = [...winnerPlayers, ...newChallengers];
   shuffleArray(allGamePlayers);
+
   config.currentTeams = {
     team1: allGamePlayers.slice(0, config.playersPerTeam),
     team2: allGamePlayers.slice(
@@ -152,8 +185,6 @@ function generateNewMatch() {
       config.playersPerTeam * 2
     ),
   };
-
-  config.participants = [...remainingPlayers];
 
   config.serviceOrder =
     Math.random() < 0.5 ? ["team1", "team2"] : ["team2", "team1"];
@@ -170,19 +201,23 @@ function shuffleArray(array) {
   }
 }
 
-document.getElementById("plusT1").addEventListener("click", () => {
-  scores.team1++;
-  updateService("team1");
-  updateUI();
-  checkVictory();
-});
+// --- Event Listeners ---
 
-document.getElementById("plusT2").addEventListener("click", () => {
-  scores.team2++;
-  updateService("team2");
+function addScore(team, scoreElement) {
+  scores[team]++;
+  scoreElement.classList.add("score-update");
+  updateService(team);
   updateUI();
   checkVictory();
-});
+  setTimeout(() => scoreElement.classList.remove("score-update"), 400);
+}
+
+document
+  .getElementById("plusT1")
+  .addEventListener("click", () => addScore("team1", elements.score1));
+document
+  .getElementById("plusT2")
+  .addEventListener("click", () => addScore("team2", elements.score2));
 
 document.getElementById("minusT1").addEventListener("click", () => {
   scores.team1 = Math.max(0, scores.team1 - 1);
@@ -195,18 +230,28 @@ document.getElementById("minusT2").addEventListener("click", () => {
 });
 
 document.getElementById("refreshbtn").addEventListener("click", () => {
-  scores = { team1: 0, team2: 0 };
-  updateUI();
-});
-
-elements.riotStarter.addEventListener("click", startFirstMatch);
-
-window.addEventListener("storage", (event) => {
-  if (event.key === "volleyballConfig") {
-    loadConfig();
+  if (confirm("Tem certeza que quer zerar o placar?")) {
+    scores = { team1: 0, team2: 0 };
     updateUI();
   }
 });
 
+elements.riotStarter.addEventListener("click", () => {
+  if (
+    confirm(
+      "Isso irá embaralhar todos os jogadores e iniciar uma nova partida. Deseja continuar?"
+    )
+  ) {
+    startFirstMatch();
+  }
+});
+elements.newMatchBtn.addEventListener("click", generateNewMatch);
+
+window.addEventListener("storage", (event) => {
+  if (event.key === "volleyballConfig") {
+    loadConfig();
+  }
+});
+
+// Initial Load
 loadConfig();
-updateUI();
