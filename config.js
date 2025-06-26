@@ -1,77 +1,92 @@
+// --- DOM ELEMENT REFERENCES ---
 const elements = {
   scoreInput: document.getElementById("scoreInput"),
   playersInput: document.getElementById("playersInput"),
   playerInput: document.getElementById("player"),
   playersList: document.getElementById("players"),
-  ptsInput: document.getElementById("ptsInput"),
-  savePlayersBtn: document.getElementById("savePlayers"),
+  addPlayerBtn: document.getElementById("addPlayerBtn"),
+  saveAllBtn: document.getElementById("saveAllBtn"),
 };
 
+// --- CONFIGURATION OBJECT ---
+// Loads configuration from localStorage or sets a default.
 let config = JSON.parse(localStorage.getItem("volleyballConfig")) || {
-  targetScore: 11,
+  targetScore: 15,
   playersPerTeam: 2,
   participants: [],
   currentTeams: { team1: [], team2: [] },
   serviceOrder: [],
 };
 
-function saveScore() {
-  const newScore = parseInt(elements.scoreInput.value);
-  if (isNaN(newScore)) {
-    showFeedback("Valor inválido!", "error");
-    elements.scoreInput.value = config.targetScore;
-    return;
-  }
+// --- CORE FUNCTIONS ---
 
-  config.targetScore = Math.min(25, Math.max(11, newScore));
-  elements.scoreInput.value = config.targetScore;
-  saveConfig();
-  showFeedback("Pontuação salva!", "success");
-}
-
-function savePlayers() {
-  const selectedValue = parseInt(elements.playersInput.value);
-  if (isNaN(selectedValue) || selectedValue < 2 || selectedValue > 6) {
-    showFeedback("Número inválido! Use entre 2-6", "error");
-    elements.playersInput.value = config.playersPerTeam;
-    return;
-  }
-
-  config.playersPerTeam = selectedValue;
-  localStorage.setItem("volleyballConfig", JSON.stringify(config));
-  showFeedback(
-    `Configuração salva: ${selectedValue} jogadores/time`,
-    "success"
-  );
-}
-
+/**
+ * Saves the entire config object to localStorage.
+ */
 function saveConfig() {
   localStorage.setItem("volleyballConfig", JSON.stringify(config));
 }
 
-function addPlayer() {
-  const name = elements.playerInput.value.trim();
-  if (!name) return;
-
-  if (!config.participants.includes(name)) {
-    config.participants.push(name);
-    elements.playerInput.value = "";
-    updatePlayersList();
+/**
+ * Updates the target score in the config object and saves.
+ */
+function saveScore() {
+  const newScore = parseInt(elements.scoreInput.value);
+  if (!isNaN(newScore)) {
+    config.targetScore = newScore;
     saveConfig();
-    showFeedback("Jogador adicionado!", "success");
   }
 }
 
-function updatePlayersList() {
-  const participants = Array.isArray(config.participants)
-    ? config.participants
-    : [];
+/**
+ * Updates the players-per-team setting in the config object and saves.
+ */
+function savePlayers() {
+  const newPlayersPerTeam = parseInt(elements.playersInput.value);
+  if (!isNaN(newPlayersPerTeam)) {
+    config.playersPerTeam = newPlayersPerTeam;
+    saveConfig();
+  }
+}
 
-  elements.playersList.innerHTML = participants
+/**
+ * Adds a new player to the participants list.
+ */
+function addPlayer() {
+  const name = elements.playerInput.value.trim();
+  if (!name) {
+    showFeedback("O nome do jogador não pode estar vazio.", "error");
+    return;
+  }
+
+  // Check if player already exists (case-insensitive)
+  const playerExists = config.participants.some(
+    (player) => player.name.toLowerCase() === name.toLowerCase()
+  );
+
+  if (playerExists) {
+    showFeedback("Este jogador já foi adicionado.", "error");
+    return;
+  }
+
+  config.participants.push({ name: name, status: "inactive" });
+  elements.playerInput.value = ""; // Clear the input field
+  updatePlayersList();
+  saveConfig();
+  showFeedback("Jogador adicionado!", "success");
+  elements.playerInput.focus(); // Keep focus on the input for easy multi-add
+}
+
+/**
+ * Re-renders the list of players in the UI.
+ * This is now corrected to display player names properly.
+ */
+function updatePlayersList() {
+  elements.playersList.innerHTML = config.participants
     .map(
       (player, index) => `
       <li data-index="${index}">
-        ${player}
+        <span>${player.name}</span>
         <span class="delete-player">❌</span>
       </li>
     `
@@ -79,59 +94,77 @@ function updatePlayersList() {
     .join("");
 }
 
+/**
+ * Displays a temporary feedback message (popup) at the bottom of the screen.
+ * @param {string} message - The text to display.
+ * @param {string} type - 'success' or 'error'.
+ */
 function showFeedback(message, type = "info") {
   const feedback = document.createElement("div");
   feedback.className = `feedback ${type}`;
   feedback.textContent = message;
   document.body.appendChild(feedback);
 
-  setTimeout(() => feedback.remove(), 2000);
+  setTimeout(() => feedback.remove(), 2500);
 }
 
-function deletePlayer() {
-  if (config.participants.length > 0) {
-    config.participants.pop();
-    saveConfig();
-    showFeedback("Último jogador removido!", "success");
-    updatePlayersList();
-  }
-}
-
+// --- INITIALIZATION AND EVENT LISTENERS ---
 document.addEventListener("DOMContentLoaded", () => {
+  // Migrate old data structure if necessary (from string array to object array)
+  if (
+    config.participants.length > 0 &&
+    typeof config.participants[0] === "string"
+  ) {
+    config.participants = config.participants.map((name) => ({
+      name: name,
+      status: "inactive",
+    }));
+    saveConfig();
+  }
+
+  // Set initial values from loaded config
   elements.scoreInput.value = config.targetScore;
   elements.playersInput.value = config.playersPerTeam;
   updatePlayersList();
 
-  elements.ptsInput.addEventListener("click", saveScore);
-  elements.scoreInput.addEventListener("change", saveScore);
+  // --- Attach Event Listeners ---
 
-  elements.savePlayersBtn.addEventListener("click", savePlayers);
+  // Save settings automatically when they are changed
+  elements.scoreInput.addEventListener("change", saveScore);
   elements.playersInput.addEventListener("change", savePlayers);
 
-  document.getElementById("player").addEventListener("keypress", (e) => {
-    if (e.key === "Enter") addPlayer();
-  });
-  elements.playersList.addEventListener("click", (e) => {
-    if (e.target.classList.contains("delete-player")) {
-      const index = e.target.closest("li").dataset.index;
-      config.participants.splice(index, 1);
-      updatePlayersList();
-      saveConfig();
+  // Add player via button click
+  elements.addPlayerBtn.addEventListener("click", addPlayer);
+
+  // Add player by pressing "Enter" in the input field
+  elements.playerInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent any default form submission behavior
+      addPlayer();
     }
   });
-  document
-    .querySelector('[onclick="addPlayer()"]')
-    .addEventListener("click", addPlayer);
 
-  document
-    .getElementById("deletePlayerBtn")
-    .addEventListener("click", deletePlayer);
+  // Delete a player by clicking the '❌' icon (using event delegation)
+  elements.playersList.addEventListener("click", (e) => {
+    if (e.target.classList.contains("delete-player")) {
+      // Find the parent <li> to get the data-index
+      const playerLi = e.target.closest("li");
+      if (playerLi) {
+        const index = playerLi.dataset.index;
+        config.participants.splice(index, 1); // Remove the player
+        updatePlayersList();
+        saveConfig();
+        showFeedback("Jogador removido.", "info");
+      }
+    }
+  });
 
-  document
-    .querySelector('[onclick="saveAll()"]')
-    .addEventListener("click", () => {
-      saveConfig();
-      showFeedback("Todas configurações salvas!", "success");
+  // Save all settings and return to the main page
+  elements.saveAllBtn.addEventListener("click", () => {
+    saveConfig();
+    showFeedback("Configurações salvas!", "success");
+    setTimeout(() => {
       window.location.href = "index.html";
-    });
+    }, 500); // A small delay so the user can see the feedback
+  });
 });

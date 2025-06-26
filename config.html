@@ -1,123 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-      <link
-        href="https://fonts.googleapis.com/css2?family=Big+Shoulders:opsz,wght@10..72,100..900&display=swap"
-        rel="stylesheet"
-      />
-      <link rel="stylesheet" href="style.css" />
-      <script
-        src="https://kit.fontawesome.com/5c055b35a0.js"
-        crossorigin="anonymous"
-      ></script>
-      <title>Configurações</title>
-    </head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DSEG7+Classic:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script
+      src="https://kit.fontawesome.com/5c055b35a0.js"
+      crossorigin="anonymous"
+    ></script>
+    <title>Configurações</title>
   </head>
   <body>
-    <header>
-      <a href="./index.html"
-        ><i
-          class="fa-solid fa-house fa-2xl controlBtn homebtn"
-          style="color: #84aeaa; margin-top: 1em"
-        ></i
-      ></a>
-    </header>
-    <main>
-      <div class="configControls">
-        <form>
-          <label for="scoreInput">Pontuação</label>
-          <select name="score" id="scoreInput">
-            <option value="11" selected>11</option>
-            <option value="12">12</option>
-            <option value="13">13</option>
-            <option value="14">14</option>
-            <option value="15">15</option>
-            <option value="16">16</option>
-            <option value="17">17</option>
-            <option value="18">18</option>
-            <option value="19">19</option>
-            <option value="20">20</option>
-            <option value="21">21</option>
-            <option value="22">22</option>
-            <option value="23">23</option>
-            <option value="24">24</option>
-            <option value="25">25</option></select
-          ><i
-            class="fa-solid fa-volleyball fa-2xl configBtn"
-            style="color: #f0e3db"
-            id="ptsInput"
-          ></i>
-        </form>
-        <form>
-          <label for="playersInput">Participantes</label>
-          <select name="players" id="playersInput">
-            <option value="2" selected>2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-          </select>
-          <i
-            class="fa-solid fa-users fa-2xl configBtn"
-            style="color: #f0e3db"
-            id="savePlayers"
-          ></i>
-        </form>
-      </div>
-      <div class="configControls">
-        <h2>Players</h2>
-        <form>
-          <input
-            type="text"
-            required
-            id="player"
-            placeholder="Adicione o participante"
-          />
-          <i
-            class="fa-solid fa-user-plus fa-2xl configBtn"
-            style="color: #4caf50"
-            onclick="addPlayer()"
-          ></i>
-        </form>
-        <div class="players">
-          <ul id="players"></ul>
-          <i
-            class="fa-solid fa-user-minus fa-2xl configBtn"
-            style="color: #f44336"
-            id="deletePlayerBtn"
-          ></i>
+    <div class="config-container">
+      <header class="config-header">
+        <a href="./index.html" class="home-link">
+          <i class="fa-solid fa-chevron-left"></i> Voltar
+        </a>
+
+        <h1>Configurações</h1>
+
+        <div class="header-spacer"></div>
+      </header>
+      <main>
+        <div class="config-panel">
+          <h2 class="panel-title">Opções da Partida</h2>
+          <div class="form-group">
+            <label for="scoreInput">Pontuação Máxima</label>
+            <select name="score" id="scoreInput">
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="15" selected>15</option>
+              <option value="21">21</option>
+              <option value="25">25</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="playersInput">Jogadores por Time</label>
+            <select name="players" id="playersInput">
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+          </div>
         </div>
-        <div class="lowerControls">
-          <i
-            class="fa-solid fa-floppy-disk fa-2xl controlBtn"
-            style="color: #4caf50"
-            onclick="saveAll()"
-          ></i>
-          <i
-            class="fa-solid fa-ban fa-2xl controlBtn"
-            style="color: #f44336"
-            onclick="cancelLast()"
-          ></i>
+
+        <div class="config-panel">
+          <h2 class="panel-title">Gerenciar Jogadores</h2>
+          <div class="add-player-form">
+            <input type="text" id="player" placeholder="Novo Player" />
+            <button id="addPlayerBtn" class="btn-primary">
+              <i class="fa-solid fa-user-plus"></i>
+            </button>
+          </div>
+          <div class="players-list-container">
+            <ul id="players"></ul>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+
+      <footer class="config-footer">
+        <button id="saveAllBtn" class="btn-save">
+          <i class="fa-solid fa-floppy-disk"></i> Salvar
+        </button>
+      </footer>
+    </div>
 
     <script src="config.js"></script>
-    <footer>
-      <h2>Placar Vôlei - 2025</h2>
-      <p>
-        Desenvolvido por:
-        <strong
-          ><a href="https://github.com/moferaisreal">Marcelo Rocha</a></strong
-        >
-      </p>
-      <p>Todos os direitos reservados</p>
-    </footer>
   </body>
 </html>

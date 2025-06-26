@@ -6,7 +6,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Big+Shoulders:opsz,wght@10..72,100..900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DSEG7+Classic:wght@400&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
@@ -14,85 +14,59 @@
       src="https://kit.fontawesome.com/5c055b35a0.js"
       crossorigin="anonymous"
     ></script>
-    <title>Jogo Vôlei</title>
+    <title>Volleyball Scoreboard</title>
   </head>
   <body>
-    <header>
-      <h1>PLACAR</h1>
-    </header>
-    <main>
-      <div class="upperControls">
-        <i
-          class="fa-solid fa-circle-play fa-2xl controlBtn"
-          style="color: #4caf50"
-          id="riotStarter"
-        ></i>
-        <i
-          class="fa-solid fa-retweet fa-2xl controlBtn"
-          style="color: #4caf50"
-          id="refreshbtn"
-        ></i>
-        <a href="./config.html">
-          <i
-            class="fa-solid fa-gears fa-2xl controlBtn"
-            style="color: #4caf50"
-            id="settingsbtn"
-          ></i>
-        </a>
-      </div>
-      <div class="scoreboard" id="scoreboard">
-        <div id="team1">
-          <h2 id="teamOne">Time 1</h2>
+    <div class="scoreboard-container">
+      <header class="scoreboard-header">
+        <h1>PLACAR</h1>
+      </header>
+      <main class="scoreboard-main">
+        <div class="team" id="team1">
+          <h2 class="team-name" id="teamOne">TIME 1</h2>
+          <div class="score-display" id="plusT1">
+            <span id="score1">0</span>
+          </div>
           <ul class="team-players" id="team1-players"></ul>
+          <div class="service-indicator" id="service1">SERVIÇO</div>
           <i
             class="fa-solid fa-circle-minus fa-2xl controlBtn"
             id="minusT1"
-            style="color: #f44336; margin-top: 1em"
-          ></i>
-          <div class="score" id="plusT1">
-            <span id="score1">0</span>
-            <i
-              class="fa-solid fa-circle-plus fa-2xl scoreBtn"
-              style="color: #4caf50"
-            ></i>
-          </div>
-          <i
-            class="fa-solid fa-star fa-beat fa-2x serviceBtnl"
-            id="service1"
-            style="color: #4caf50"
           ></i>
         </div>
-        <div id="team2">
-          <h2 id="teamTwo">Time 2</h2>
+        <div class="team" id="team2">
+          <h2 class="team-name" id="teamTwo">TIME 2</h2>
+          <div class="score-display" id="plusT2">
+            <span id="score2">0</span>
+          </div>
           <ul class="team-players" id="team2-players"></ul>
+          <div class="service-indicator" id="service2">SERVIÇO</div>
           <i
             class="fa-solid fa-circle-minus fa-2xl controlBtn"
             id="minusT2"
-            style="color: #f44336; margin-top: 1em"
-          ></i>
-
-          <div class="score" id="plusT2">
-            <span id="score2">0</span
-            ><i
-              class="fa-solid fa-circle-plus fa-2xl scoreBtn"
-              style="color: #4caf50"
-            ></i>
-          </div>
-          <i
-            class="fa-solid fa-star fa-beat fa-2x serviceBtnl"
-            id="service2"
-            style="color: #4caf50"
           ></i>
         </div>
+      </main>
+      <div class="scoreboard-controls">
+        <div class="control-group">
+          <h3>SISTEMA</h3>
+          <i
+            class="fa-solid fa-circle-play fa-2xl controlBtn"
+            id="riotStarter"
+          ></i>
+          <i class="fa-solid fa-retweet fa-2xl controlBtn" id="refreshbtn"></i>
+          <a href="./config.html">
+            <i class="fa-solid fa-gears fa-2xl controlBtn" id="settingsbtn"></i>
+          </a>
+        </div>
       </div>
-    </main>
+    </div>
 
     <div class="overlay" id="victoryOverlay"></div>
     <div class="modal-vitoria" id="victoryModal">
-      <h2 id="winner-message">Time Vencedor!</h2>
+      <h2 id="winner-message">Team Victorious!</h2>
       <button id="newMatchBtn">Nova Partida</button>
     </div>
-
     <script src="script.js"></script>
   </body>
 </html>
