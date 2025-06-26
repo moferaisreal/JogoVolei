@@ -1,23 +1,8 @@
-// Fallback for initial configuration
-let scores = {
-  team1: 0,
-  team2: 0,
-};
+// --- GLOBAL STATE ---
+let scores = { team1: 0, team2: 0 };
+let config = {}; // Master config from localStorage
 
-let config = JSON.parse(localStorage.getItem("volleyballConfig")) || {
-  targetScore: 25,
-  playersPerTeam: 6,
-  participants: [],
-  currentTeams: { team1: [], team2: [] },
-  serviceOrder: [],
-};
-
-// Function to save the current configuration to localStorage
-function saveConfig() {
-  localStorage.setItem("volleyballConfig", JSON.stringify(config));
-}
-
-// Object to hold references to key DOM elements
+// --- DOM ELEMENT REFERENCES ---
 const elements = {
   score1: document.getElementById("score1"),
   score2: document.getElementById("score2"),
@@ -32,28 +17,47 @@ const elements = {
   newMatchBtn: document.getElementById("newMatchBtn"),
 };
 
-// --- CORE GAME LOGIC ---
+// --- CORE LOGIC ---
 
-/**
- * Starts the very first match by shuffling all participants and creating two teams.
- */
-function startFirstMatch() {
+function saveConfig() {
+  localStorage.setItem("volleyballConfig", JSON.stringify(config));
+}
+
+function resetSessionState() {
+  if (!config.participants) return;
+  config.participants.forEach((player) => {
+    player.gameState = player.status === "active" ? "waiting" : "resting";
+  });
+}
+
+function startNewSession() {
+  resetSessionState();
+
+  const availablePlayers = config.participants.filter(
+    (p) => p.status === "active"
+  );
   const playersNeeded = config.playersPerTeam * 2;
 
-  if (config.participants.length < playersNeeded) {
+  if (availablePlayers.length < playersNeeded) {
     alert(
-      `Adicione pelo menos ${playersNeeded} participantes na página de Configuração!`
+      `São necessários pelo menos ${playersNeeded} jogadores 'ativos' para começar.`
     );
     return;
   }
 
-  shuffleArray(config.participants);
+  shuffleArray(availablePlayers);
 
-  const firstPlayers = config.participants.slice(0, playersNeeded);
+  const inactivePlayers = config.participants.filter(
+    (p) => p.status === "inactive"
+  );
+  config.participants = [...availablePlayers, ...inactivePlayers];
+
+  const playersForFirstMatch = availablePlayers.slice(0, playersNeeded);
+  playersForFirstMatch.forEach((p) => (p.gameState = "playing"));
 
   config.currentTeams = {
-    team1: firstPlayers.slice(0, config.playersPerTeam),
-    team2: firstPlayers.slice(config.playersPerTeam, playersNeeded),
+    team1: playersForFirstMatch.slice(0, config.playersPerTeam),
+    team2: playersForFirstMatch.slice(config.playersPerTeam, playersNeeded),
   };
 
   scores = { team1: 0, team2: 0 };
@@ -65,50 +69,66 @@ function startFirstMatch() {
 }
 
 /**
- * THIS IS THE CORRECTED FUNCTION.
- * It starts a new match after a victory, implementing the "King of the Court" rule.
+ * [NEW IMPLEMENTATION] Generates the next match using the "Temporary Array" logic.
  */
 function generateNewMatch() {
   hideVictoryModal();
 
-  // 1. Identify winner and loser teams (these are arrays of player objects).
+  // Step 1: Isolate Winners and Losers into temporary arrays.
   const winnerTeamKey = scores.team1 > scores.team2 ? "team1" : "team2";
-  const winners = config.currentTeams[winnerTeamKey];
-  const losers =
-    config.currentTeams[winnerTeamKey === "team1" ? "team2" : "team1"];
+  const winnersArray = [...config.currentTeams[winnerTeamKey]];
+  const losersArray = [
+    ...config.currentTeams[winnerTeamKey === "team1" ? "team2" : "team1"],
+  ];
 
-  // 2. Create a set of names for players who just finished the match.
+  // Create a Set of names for players who just played, for easy filtering.
   const playingPlayerNames = new Set(
-    [...winners, ...losers].map((p) => p.name)
+    [...winnersArray, ...losersArray].map((p) => p.name)
   );
 
-  // 3. Get a clean list of all players who were waiting.
-  const waitingPlayers = config.participants.filter(
+  // The "main array" now consists of everyone who was NOT on the court.
+  const mainPool = config.participants.filter(
     (p) => !playingPlayerNames.has(p.name)
   );
 
-  // 4. Form the new queue of available players. Losers go to the back of the line.
-  const playerQueue = [...waitingPlayers, ...losers];
+  // Step 2: Draft New Challengers from the main pool.
+  const challengersNeeded = config.playersPerTeam * 2 - winnersArray.length;
 
-  // 5. The winners stay. We pick new challengers from the front of the queue.
-  const challengersNeeded = config.playersPerTeam * 2 - winners.length;
-  const challengers = playerQueue.slice(0, challengersNeeded); // Use slice (non-destructive)
+  // The draft pool is only players who are waiting (active status).
+  const waitingPool = mainPool.filter((p) => p.status === "active");
 
-  // 6. The players for the next match are the winners plus the new challengers.
-  const nextMatchPlayers = [...winners, ...challengers];
-  shuffleArray(nextMatchPlayers);
+  if (waitingPool.length < challengersNeeded) {
+    alert("Não há jogadores suficientes na fila para a próxima partida!");
+    return;
+  }
 
-  // 7. Assign the new teams.
+  const newChallengers = waitingPool.slice(0, challengersNeeded);
+
+  // Step 3: Form the New Match.
+  const playersForNextMatch = [...winnersArray, ...newChallengers];
+  playersForNextMatch.forEach((p) => (p.gameState = "playing")); // Update state for all players in the next match.
+  shuffleArray(playersForNextMatch);
+
   config.currentTeams = {
-    team1: nextMatchPlayers.slice(0, config.playersPerTeam),
-    team2: nextMatchPlayers.slice(config.playersPerTeam),
+    team1: playersForNextMatch.slice(0, config.playersPerTeam),
+    team2: playersForNextMatch.slice(config.playersPerTeam),
   };
 
-  // 8. Reconstruct the master participant list in the new order for the next round.
-  const remainingQueue = playerQueue.slice(challengersNeeded);
-  config.participants = [...nextMatchPlayers, ...remainingQueue];
+  // Step 4: Rebuild the Master Array in the correct order.
+  const remainingWaiting = waitingPool.slice(challengersNeeded);
+  const inactivePlayers = mainPool.filter((p) => p.status === "inactive");
 
-  // 9. Reset scores, save the new state, and update the display.
+  // Set the losers' state back to 'waiting' before adding them to the end of the queue.
+  losersArray.forEach((p) => (p.gameState = "waiting"));
+
+  config.participants = [
+    ...playersForNextMatch, // Players in the new match are at the front.
+    ...remainingWaiting, // The rest of the waiting queue.
+    ...losersArray, // The losers are now at the back of the queue.
+    ...inactivePlayers, // Inactive players are last.
+  ];
+
+  // Step 5: Reset scores and save the new state.
   scores = { team1: 0, team2: 0 };
   config.serviceOrder =
     Math.random() < 0.5 ? ["team1", "team2"] : ["team2", "team1"];
@@ -119,18 +139,17 @@ function generateNewMatch() {
 
 // --- UI AND DISPLAY FUNCTIONS ---
 
-/**
- * Updates the entire UI with current scores, teams, and service.
- */
 function updateUI() {
   elements.score1.textContent = scores.team1;
   elements.score2.textContent = scores.team2;
 
-  // Correctly displays player names from the player objects.
-  elements.teamPlayers1.innerHTML = config.currentTeams.team1
+  const team1Players = config.currentTeams.team1 || [];
+  const team2Players = config.currentTeams.team2 || [];
+
+  elements.teamPlayers1.innerHTML = team1Players
     .map((player) => `<li>${player.name}</li>`)
     .join("");
-  elements.teamPlayers2.innerHTML = config.currentTeams.team2
+  elements.teamPlayers2.innerHTML = team2Players
     .map((player) => `<li>${player.name}</li>`)
     .join("");
 
@@ -138,37 +157,38 @@ function updateUI() {
     .getElementById("team1")
     .querySelector(
       "h2"
-    ).textContent = `Time 1 (${config.currentTeams.team1.length} jogadores)`;
+    ).textContent = `Time 1 (${team1Players.length} jogadores)`;
   document
     .getElementById("team2")
     .querySelector(
       "h2"
-    ).textContent = `Time 2 (${config.currentTeams.team2.length} jogadores)`;
+    ).textContent = `Time 2 (${team2Players.length} jogadores)`;
 
   updateService();
 }
 
-/**
- * Shows or hides the service indicator for the correct team.
- */
 function updateService(scoringTeam) {
-  if (scoringTeam && config.serviceOrder[0] !== scoringTeam) {
+  if (
+    config.serviceOrder &&
+    config.serviceOrder.length > 0 &&
+    scoringTeam &&
+    config.serviceOrder[0] !== scoringTeam
+  ) {
     config.serviceOrder.push(config.serviceOrder.shift());
   }
   elements.service1.classList.toggle(
     "active",
-    config.serviceOrder[0] === "team1"
+    config.serviceOrder && config.serviceOrder[0] === "team1"
   );
   elements.service2.classList.toggle(
     "active",
-    config.serviceOrder[0] === "team2"
+    config.serviceOrder && config.serviceOrder[0] === "team2"
   );
 }
 
-/**
- * Checks if a team has reached the target score with a 2-point lead.
- */
 function checkVictory() {
+  if (!config.targetScore) return;
+
   const diff = Math.abs(scores.team1 - scores.team2);
   const maxScore = Math.max(scores.team1, scores.team2);
 
@@ -178,9 +198,6 @@ function checkVictory() {
   }
 }
 
-/**
- * Displays the victory modal with the winning team's names.
- */
 function showVictoryModal(winner) {
   const winnerNames = config.currentTeams[winner].map((p) => p.name).join(", ");
   elements.winnerMessage.textContent = `${winnerNames} venceram!`;
@@ -188,19 +205,11 @@ function showVictoryModal(winner) {
   elements.victoryModal.classList.add("visible");
 }
 
-/**
- * Hides the victory modal and overlay.
- */
 function hideVictoryModal() {
   elements.victoryOverlay.classList.remove("visible");
   elements.victoryModal.classList.remove("visible");
 }
 
-// --- UTILITY FUNCTIONS ---
-
-/**
- * Shuffles an array in place (Fisher-Yates shuffle).
- */
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -210,10 +219,18 @@ function shuffleArray(array) {
 
 // --- EVENT LISTENERS ---
 
-// Listener for the "New Match" button on the victory modal.
 elements.newMatchBtn.addEventListener("click", generateNewMatch);
 
-// Listeners for scoring buttons
+elements.riotStarter.addEventListener("click", () => {
+  if (
+    confirm(
+      "Isso irá resetar a sessão, embaralhar todos os jogadores ATIVOS e iniciar uma nova partida com as configurações atuais. Deseja continuar?"
+    )
+  ) {
+    startNewSession();
+  }
+});
+
 document.getElementById("plusT1").addEventListener("click", () => {
   scores.team1++;
   elements.score1.parentElement.classList.add("score-update");
@@ -225,7 +242,6 @@ document.getElementById("plusT1").addEventListener("click", () => {
     400
   );
 });
-
 document.getElementById("plusT2").addEventListener("click", () => {
   scores.team2++;
   elements.score2.parentElement.classList.add("score-update");
@@ -237,30 +253,14 @@ document.getElementById("plusT2").addEventListener("click", () => {
     400
   );
 });
-
-// Listeners for minus buttons
 document.getElementById("minusT1").addEventListener("click", () => {
   scores.team1 = Math.max(0, scores.team1 - 1);
   updateUI();
 });
-
 document.getElementById("minusT2").addEventListener("click", () => {
   scores.team2 = Math.max(0, scores.team2 - 1);
   updateUI();
 });
-
-// Listener for the "Start/Shuffle All" button
-elements.riotStarter.addEventListener("click", () => {
-  if (
-    confirm(
-      "Isso irá embaralhar todos os jogadores e iniciar uma nova partida. Deseja continuar?"
-    )
-  ) {
-    startFirstMatch();
-  }
-});
-
-// Listener for the reset score button
 document.getElementById("refreshbtn").addEventListener("click", () => {
   if (confirm("Tem certeza que quer zerar o placar?")) {
     scores = { team1: 0, team2: 0 };
@@ -268,18 +268,34 @@ document.getElementById("refreshbtn").addEventListener("click", () => {
   }
 });
 
-// --- INITIAL LOAD ---
-// Load config from localStorage and update the UI when the page loads.
+// --- INITIALIZATION ---
+
 function loadConfig() {
   const savedConfig = localStorage.getItem("volleyballConfig");
+  const defaultConfig = {
+    targetScore: 15,
+    playersPerTeam: 2,
+    participants: [],
+    currentTeams: { team1: [], team2: [] },
+    serviceOrder: [],
+  };
+
   if (savedConfig) {
-    config = JSON.parse(savedConfig);
+    config = { ...defaultConfig, ...JSON.parse(savedConfig) };
+  } else {
+    config = defaultConfig;
+    saveConfig();
   }
-  // Ensure all parts of the config object exist to prevent errors
-  config.currentTeams = config.currentTeams || { team1: [], team2: [] };
-  config.participants = config.participants || [];
-  config.serviceOrder = config.serviceOrder || [];
+
+  window.addEventListener("storage", (event) => {
+    if (event.key === "volleyballConfig") {
+      // A simple page reload is the safest way to apply changes from another tab.
+      window.location.reload();
+    }
+  });
+
   updateUI();
 }
 
+// Load the application.
 loadConfig();

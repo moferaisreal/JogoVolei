@@ -9,7 +9,6 @@ const elements = {
 };
 
 // --- CONFIGURATION OBJECT ---
-// Loads configuration from localStorage or sets a default.
 let config = JSON.parse(localStorage.getItem("volleyballConfig")) || {
   targetScore: 15,
   playersPerTeam: 2,
@@ -20,16 +19,10 @@ let config = JSON.parse(localStorage.getItem("volleyballConfig")) || {
 
 // --- CORE FUNCTIONS ---
 
-/**
- * Saves the entire config object to localStorage.
- */
 function saveConfig() {
   localStorage.setItem("volleyballConfig", JSON.stringify(config));
 }
 
-/**
- * Updates the target score in the config object and saves.
- */
 function saveScore() {
   const newScore = parseInt(elements.scoreInput.value);
   if (!isNaN(newScore)) {
@@ -38,9 +31,6 @@ function saveScore() {
   }
 }
 
-/**
- * Updates the players-per-team setting in the config object and saves.
- */
 function savePlayers() {
   const newPlayersPerTeam = parseInt(elements.playersInput.value);
   if (!isNaN(newPlayersPerTeam)) {
@@ -49,9 +39,6 @@ function savePlayers() {
   }
 }
 
-/**
- * Adds a new player to the participants list.
- */
 function addPlayer() {
   const name = elements.playerInput.value.trim();
   if (!name) {
@@ -59,7 +46,6 @@ function addPlayer() {
     return;
   }
 
-  // Check if player already exists (case-insensitive)
   const playerExists = config.participants.some(
     (player) => player.name.toLowerCase() === name.toLowerCase()
   );
@@ -69,32 +55,34 @@ function addPlayer() {
     return;
   }
 
-  config.participants.push({ name: name, status: "inactive" });
-  elements.playerInput.value = ""; // Clear the input field
+  config.participants.push({
+    name: name,
+    status: "active",
+    gameState: "waiting",
+  });
+  elements.playerInput.value = "";
   updatePlayersList();
   saveConfig();
   showFeedback("Jogador adicionado!", "success");
-  elements.playerInput.focus(); // Keep focus on the input for easy multi-add
+  elements.playerInput.focus();
 }
 
 /**
- * Re-renders the list of players in the UI.
- * This is now corrected to display player names properly.
+ * MODIFIED: Re-renders the player list using a unique 'data-name' attribute for identification.
  */
 function updatePlayersList() {
   elements.playersList.innerHTML = config.participants
-    .map((player, index) => {
-      // Check the player's status to determine if the toggle should be on or off by default
+    .map((player) => {
       const isChecked = player.status === "active" ? "checked" : "";
-
+      // Using player.name as the unique identifier is more robust than using the array index.
       return `
-          <li class="list-group-item d-flex justify-content-between align-items-center">
+          <li class="list-group-item d-flex justify-content-between align-items-center" data-name="${player.name}">
             <span>${player.name}</span>
             <div class="player-controls">
               <div class="form-check form-switch">
-                <input class="form-check-input status-toggle" type="checkbox" role="switch" data-index="${index}" ${isChecked} title="Toggle player status" checked>
-                <span class="delete-player" title="Delete player">❌</span>
+                <input class="form-check-input status-toggle" type="checkbox" role="switch" ${isChecked} title="Toggle player status">
               </div>
+              <span class="delete-player" title="Delete player">❌</span>
             </div>
           </li>
         `;
@@ -102,77 +90,82 @@ function updatePlayersList() {
     .join("");
 }
 
-/**
- * Displays a temporary feedback message (popup) at the bottom of the screen.
- * @param {string} message - The text to display.
- * @param {string} type - 'success' or 'error'.
- */
 function showFeedback(message, type = "info") {
   const feedback = document.createElement("div");
   feedback.className = `feedback ${type}`;
   feedback.textContent = message;
   document.body.appendChild(feedback);
-
   setTimeout(() => feedback.remove(), 2500);
 }
 
 // --- INITIALIZATION AND EVENT LISTENERS ---
 document.addEventListener("DOMContentLoaded", () => {
-  // Migrate old data structure if necessary (from string array to object array)
-  if (
-    config.participants.length > 0 &&
-    typeof config.participants[0] === "string"
-  ) {
-    config.participants = config.participants.map((name) => ({
-      name: name,
-      status: "inactive",
-    }));
-    saveConfig();
-  }
-
-  // Set initial values from loaded config
   elements.scoreInput.value = config.targetScore;
   elements.playersInput.value = config.playersPerTeam;
   updatePlayersList();
 
   // --- Attach Event Listeners ---
 
-  // Save settings automatically when they are changed
   elements.scoreInput.addEventListener("change", saveScore);
   elements.playersInput.addEventListener("change", savePlayers);
-
-  // Add player via button click
   elements.addPlayerBtn.addEventListener("click", addPlayer);
-
-  // Add player by pressing "Enter" in the input field
   elements.playerInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
-      e.preventDefault(); // Prevent any default form submission behavior
+      e.preventDefault();
       addPlayer();
     }
   });
 
-  // Delete a player by clicking the '❌' icon (using event delegation)
+  /**
+   * MODIFIED: Event listener now uses 'data-name' to find the correct player before taking action.
+   * This is the definitive fix for the delete functionality.
+   */
   elements.playersList.addEventListener("click", (e) => {
-    if (e.target.classList.contains("delete-player")) {
-      // Find the parent <li> to get the data-index
-      const playerLi = e.target.closest("li");
-      if (playerLi) {
-        const index = playerLi.dataset.index;
-        config.participants.splice(index, 1); // Remove the player
-        updatePlayersList();
-        saveConfig();
-        showFeedback("Jogador removido.", "info");
+    const target = e.target;
+    const playerLi = target.closest("li");
+
+    if (!playerLi) return;
+
+    // Find the player in the array using their unique name from the data-attribute.
+    const playerName = playerLi.dataset.name;
+    const playerIndex = config.participants.findIndex(
+      (p) => p.name === playerName
+    );
+
+    // If for some reason the player isn't found, do nothing.
+    if (playerIndex === -1) return;
+
+    const player = config.participants[playerIndex];
+
+    // Handle Toggling Status
+    if (target.classList.contains("status-toggle")) {
+      if (target.checked) {
+        player.status = "active";
+        player.gameState = "waiting";
+        showFeedback(`${player.name} está na fila.`, "info");
+      } else {
+        player.status = "inactive";
+        player.gameState = "resting";
+        showFeedback(`${player.name} está descansando.`, "info");
       }
+      saveConfig();
+    }
+
+    // Handle Deleting a Player
+    if (target.classList.contains("delete-player")) {
+      // Remove the player using the found index.
+      config.participants.splice(playerIndex, 1);
+      updatePlayersList();
+      saveConfig();
+      showFeedback(`${playerName} foi removido.`, "info");
     }
   });
 
-  // Save all settings and return to the main page
   elements.saveAllBtn.addEventListener("click", () => {
     saveConfig();
     showFeedback("Configurações salvas!", "success");
     setTimeout(() => {
       window.location.href = "index.html";
-    }, 500); // A small delay so the user can see the feedback
+    }, 500);
   });
 });
