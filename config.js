@@ -83,14 +83,22 @@ function addPlayer() {
  */
 function updatePlayersList() {
   elements.playersList.innerHTML = config.participants
-    .map(
-      (player, index) => `
-      <li data-index="${index}">
-        <span>${player.name}</span>
-        <span class="delete-player">❌</span>
-      </li>
-    `
-    )
+    .map((player, index) => {
+      // Check the player's status to determine if the toggle should be on or off by default
+      const isChecked = player.status === "active" ? "checked" : "";
+
+      return `
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>${player.name}</span>
+            <div class="player-controls">
+              <div class="form-check form-switch">
+                <input class="form-check-input status-toggle" type="checkbox" role="switch" data-index="${index}" ${isChecked} title="Toggle player status" checked>
+                <span class="delete-player" title="Delete player">❌</span>
+              </div>
+            </div>
+          </li>
+        `;
+    })
     .join("");
 }
 

@@ -16,10 +16,13 @@
   --color-control-bg: #2a2a2a;
   --color-success: #28a745;
   --color-error: #dc3545;
-
-  /* Fonts */
-  --ff-scoreboard: "DSEG7 Classic", sans-serif;
-  --ff-ui: "system-ui", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+  --color-link: #3b82f6; /* A general-purpose link/accent blue */
+  --color-link-hover: #2563eb;
+  --color-text-dim: #888; /* For less important text */
+  --color-overlay: rgba(0, 0, 0, 0.8);
+  --color-shadow: rgba(0, 0, 0, 0.5);
+  --color-inset-shadow: rgba(0, 0, 0, 1);
+  --color-text-bright: #ffffff;
 }
 
 /* --- Global Resets & Body --- */
@@ -56,7 +59,8 @@ body {
   border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 10px 40px var(--color-shadow),
+    inset 0 0 15px var(--color-shadow);
 }
 
 .scoreboard-header h1 {
@@ -67,12 +71,12 @@ body {
   letter-spacing: 4px;
   margin-bottom: 2rem;
   text-transform: uppercase;
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+  text-shadow: 0 0 5px rgba(238, 238, 238, 0.1); /* Kept as RGBA for subtle white glow */
 }
 
 .scoreboard-main {
   display: flex;
-  flex-direction: column; /* Mobile first: stacked */
+  flex-direction: column;
   gap: 2rem;
   margin-bottom: 2rem;
 }
@@ -97,12 +101,12 @@ body {
 
 .score-display {
   width: 100%;
-  background-color: #000;
+  background-color: #000; /* Black is intentional for deepest contrast */
   border-radius: 6px;
   text-align: center;
   padding: 0.5rem;
-  border: 1px solid #222;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 1);
+  border: 1px solid var(--color-border);
+  box-shadow: inset 0 0 10px var(--color-inset-shadow);
   cursor: pointer;
   user-select: none;
 }
@@ -113,15 +117,15 @@ body {
   line-height: 1;
   font-size: clamp(6rem, 25vw, 12rem);
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.2),
-    0 0 10px var(--color-score-glow), 0 0 20px var(--color-score-glow),
-    0 0 35px var(--color-score-glow);
+    /* Kept as RGBA for subtle white glow */ 0 0 10px var(--color-score-glow),
+    0 0 20px var(--color-score-glow), 0 0 35px var(--color-score-glow);
   transition: text-shadow 0.3s ease-in-out;
 }
 
 .score-display:hover span {
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.3),
-    0 0 15px var(--color-score-glow), 0 0 30px var(--color-score-glow),
-    0 0 50px var(--color-score-glow);
+    /* Kept as RGBA for subtle white glow */ 0 0 15px var(--color-score-glow),
+    0 0 30px var(--color-score-glow), 0 0 50px var(--color-score-glow);
 }
 
 .team-players {
@@ -136,18 +140,22 @@ body {
   margin-bottom: 0.25rem;
   padding: 0.25rem;
   border-radius: 4px;
-  color: #aaa;
+  color: var(--color-text-dim);
   font-size: 0.9rem;
 }
 
 .service-indicator {
-  font-weight: bold;
   color: var(--color-success);
   visibility: hidden;
   margin-top: 1rem;
-  letter-spacing: 2px;
   opacity: 0;
   transition: opacity 0.3s ease;
+  height: 1.8em;
+}
+
+.service-indicator img {
+  height: 100%;
+  width: auto;
 }
 
 .service-indicator.active {
@@ -173,14 +181,14 @@ body {
 
 .control-group h3 {
   margin-bottom: 0.75rem;
-  color: #888;
+  color: var(--color-text-dim);
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .controlBtn {
-  color: #ddd;
+  color: var(--color-control-text);
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 1.8rem;
@@ -201,17 +209,17 @@ body {
 }
 
 #settingsbtn {
-  color: #3b82f6;
+  color: var(--color-link);
 }
 #riotStarter {
   color: #f59e0b;
-}
+} /* Kept as unique accent */
 #refreshbtn {
   color: #10b981;
-}
+} /* Kept as unique accent */
 #minusT1,
 #minusT2 {
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 /*
@@ -241,12 +249,12 @@ body {
   font-size: clamp(1.2rem, 5vw, 1.8rem);
   letter-spacing: 2px;
   text-transform: uppercase;
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+  text-shadow: 0 0 5px rgba(238, 238, 238, 0.1);
 }
 
 .home-link {
   flex-shrink: 0;
-  color: #aaa;
+  color: var(--color-text-dim);
   text-decoration: none;
   font-size: 0.9rem;
   transition: color 0.2s ease;
@@ -254,7 +262,7 @@ body {
 }
 
 .home-link:hover {
-  color: #fff;
+  color: var(--color-text-bright);
 }
 
 .home-link .fa-solid {
@@ -263,7 +271,7 @@ body {
 
 .header-spacer {
   flex-shrink: 0;
-  width: 60px; /* Adjust to match the approximate width of your home-link */
+  width: 60px;
   visibility: hidden;
 }
 
@@ -292,14 +300,14 @@ body {
 }
 
 .form-group label {
-  color: #ccc;
+  color: var(--color-control-text);
 }
 
 input[type="text"],
 select {
   background: var(--color-background);
   border: 1px solid var(--color-border);
-  color: #fff;
+  color: var(--color-text-bright);
   border-radius: 6px;
   padding: 0.75rem;
   font-size: 1rem;
@@ -309,7 +317,7 @@ select {
 input[type="text"]:focus,
 select:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--color-link);
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
 }
 
@@ -335,21 +343,21 @@ select {
 }
 
 .btn-primary {
-  background-color: #3b82f6;
-  color: white;
+  background-color: var(--color-link);
+  color: var(--color-text-bright);
   border: none;
   border-radius: 6px;
-  padding: 0.6rem 0.8rem; /* Reduced padding */
-  font-size: 0.8rem; /* Reduced icon size */
+  padding: 0.6rem 0.8rem;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: background-color 0.2s;
-  display: flex; /* Added for better icon centering */
+  display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .btn-primary:hover {
-  background-color: #2563eb;
+  background-color: var(--color-link-hover);
 }
 
 .players-list-container {
@@ -361,6 +369,7 @@ select {
 
 #players {
   list-style: none;
+  padding: 0;
 }
 
 #players li {
@@ -368,20 +377,15 @@ select {
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+  border-bottom: 1px solid var(--color-border);
 }
 
-#players li:nth-child(odd) {
-  background-color: rgba(255, 255, 255, 0.02);
-}
-
-#players li:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+#players li:last-child {
+  border-bottom: none;
 }
 
 #players li .delete-player {
-  color: #888;
+  color: var(--color-text-dim);
   cursor: pointer;
   font-size: 1rem;
   padding: 0.5rem;
@@ -400,7 +404,7 @@ select {
 
 .btn-save {
   background-color: var(--color-success);
-  color: white;
+  color: var(--color-text-bright);
   border: none;
   border-radius: 6px;
   padding: 0.8rem 2rem;
@@ -412,11 +416,17 @@ select {
 }
 
 .btn-save:hover {
-  background-color: #218838;
+  background-color: #218838; /* Kept for specific hover effect */
 }
 
 .btn-save .fa-solid {
   margin-right: 0.75rem;
+}
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 /*
@@ -431,7 +441,7 @@ select {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  background: var(--color-overlay);
   backdrop-filter: blur(5px);
   z-index: 999;
   opacity: 0;
@@ -452,7 +462,7 @@ select {
   padding: 2rem;
   border-radius: 12px;
   text-align: center;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 5px 25px var(--color-shadow);
   border: 1px solid var(--color-border);
   z-index: 1000;
   opacity: 0;
@@ -472,7 +482,7 @@ select {
 }
 #newMatchBtn {
   background-color: var(--color-success);
-  color: white;
+  color: var(--color-text-bright);
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   border: none;
@@ -495,9 +505,9 @@ select {
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   font-family: var(--ff-ui);
-  color: white;
+  color: var(--color-text-bright);
   z-index: 2000;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px var(--color-shadow);
 }
 .feedback.success {
   background: var(--color-success);
@@ -535,6 +545,6 @@ select {
 
   /* Config Page */
   .btn-save {
-    width: auto; /* Button is not full-width on desktop */
+    width: auto;
   }
 }
